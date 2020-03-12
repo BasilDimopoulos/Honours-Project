@@ -1,0 +1,7 @@
+Please using the following naming convention for the filename of Weekly reports:
+
+FirstName_LastName - SxWx
+
+Where x denotes the appropriate semester and week, e.g.
+
+Daniel_Lukis - S1W2
