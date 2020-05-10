@@ -6,4 +6,4 @@ import simpy
 def test():
     print("TEST")
 
-env = simpy.Enviroment()
+env = simpy.Environment()
