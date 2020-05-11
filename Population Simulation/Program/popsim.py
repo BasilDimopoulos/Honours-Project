@@ -3,10 +3,11 @@ import simpy
 import matplotlib.pyplot as plt
 
 #Starting Population
-P0 = 100000000
-BirthRate = 0.05
-DeathRate = 0.04
+P0 = 19028802
+BirthRate = 13.1 / 1000
+DeathRate = 6.7 / 1000
 Year = 2000
+SimYears = 16
 
 #Vars
 graph_years = []
@@ -32,8 +33,13 @@ class Population():
         
 
 sim = Population()
-sim.simulate( 10 )
-plt.plot(graph_years, graph_popul)
+sim.simulate( SimYears )
+plt.plot(graph_years, graph_popul, 'bo-')
 plt.ylabel('Population')
 plt.xlabel('Year')
+for x,y in zip(graph_years, graph_popul):
+    
+    label = "{:.2f}".format(y)
+    plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
+
 plt.show()
