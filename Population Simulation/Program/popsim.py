@@ -47,11 +47,10 @@ with open(in_fileName, mode = 'r') as csv_file:
         elif row["Measure"] == "Population":
             input_pop.append((int(row["Time"]),int(row["Value"])))
 
-
 #Itteration
 class Population():
     def __init__(self):
-        self.year = 2000
+        self.year = 1999
         self.pop = P0
         graph_years.append(self.year)
         graph_popul.append(self.pop)
@@ -80,6 +79,7 @@ class Population():
 
 sim = Population()
 sim.simulate( SimYears )
+plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
 plt.plot(graph_years, graph_popul, 'bo-')
 plt.ylabel('Population')
 plt.xlabel('Year')
