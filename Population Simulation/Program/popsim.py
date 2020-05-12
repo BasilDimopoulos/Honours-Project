@@ -7,10 +7,10 @@ import os
 
 #Starting Population
 P0 = 19028802
-BirthRate = 13.1 / 1000
-DeathRate = 6.7 / 1000
-Year = 2000
-SimYears = 16
+# BirthRate = 13.1 / 1000
+# DeathRate = 6.7 / 1000
+# Year = 2000
+SimYears = 11
 
 #Vars
 graph_years = []
@@ -51,8 +51,10 @@ with open(in_fileName, mode = 'r') as csv_file:
 #Itteration
 class Population():
     def __init__(self):
-        self.year = Year
+        self.year = 2000
         self.pop = P0
+        graph_years.append(self.year)
+        graph_popul.append(self.pop)
         print(self.year, self.pop)
 
     def simulate(self, count):
@@ -61,28 +63,39 @@ class Population():
 
     def  simyear(self):
         self.year = self.year + 1
+        for year, value in input_deaths:
+            if year == self.year:
+                DeathRate = value / self.pop
+                break
+
+        for year, value in input_births:
+            if year == self.year:
+                BirthRate = value / self.pop
+                break
+        
         self.pop = self.pop + self.pop*BirthRate - self.pop*DeathRate
         graph_years.append(self.year)
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
 
-
-print("size of input_deaths: " + str(len(input_deaths)))
-print(input_deaths[0][0])
-x = input_deaths[0]
-print(x[0])
-print(x[1])
-for year, value in input_deaths:
-    print(year, value)
-#
-# sim = Population()
-# sim.simulate( SimYears )
-# plt.plot(graph_years, graph_popul, 'bo-')
-# plt.ylabel('Population')
-# plt.xlabel('Year')
+sim = Population()
+sim.simulate( SimYears )
+plt.plot(graph_years, graph_popul, 'bo-')
+plt.ylabel('Population')
+plt.xlabel('Year')
 # for x,y in zip(graph_years, graph_popul):
-#
 #     label = "{:.2f}".format(y)
 #     plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
-#
-# plt.show()
+
+
+truth_year = []
+truth_pop = []
+for year, value in input_pop:
+    truth_year.append(year)
+    truth_pop.append(value)
+
+plt.plot(truth_year, truth_pop, 'ro-')
+
+
+
+plt.show()
