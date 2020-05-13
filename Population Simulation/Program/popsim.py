@@ -60,7 +60,6 @@ class Population():
             self.simyear()
 
     def  simyear(self):
-        self.year = self.year + 1
         for year, value in input_deaths:
             if year == self.year:
                 DeathRate = value / self.pop
@@ -70,7 +69,8 @@ class Population():
             if year == self.year:
                 BirthRate = value / self.pop
                 break
-        
+            
+        self.year = self.year + 1
         self.pop = self.pop + self.pop*BirthRate - self.pop*DeathRate
         graph_years.append(self.year)
         graph_popul.append(self.pop)
