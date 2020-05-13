@@ -7,10 +7,8 @@ import os
 
 #Starting Population
 P0 = 19028802
-# BirthRate = 13.1 / 1000
-# DeathRate = 6.7 / 1000
-# Year = 2000
 SimYears = 11
+printLabels = True
 
 #Vars
 graph_years = []
@@ -47,10 +45,11 @@ with open(in_fileName, mode = 'r') as csv_file:
         elif row["Measure"] == "Population":
             input_pop.append((int(row["Time"]),int(row["Value"])))
 
+
 #Itteration
 class Population():
     def __init__(self):
-        self.year = 1999
+        self.year = 2000
         self.pop = P0
         graph_years.append(self.year)
         graph_popul.append(self.pop)
@@ -83,9 +82,11 @@ plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
 plt.plot(graph_years, graph_popul, 'bo-')
 plt.ylabel('Population')
 plt.xlabel('Year')
-# for x,y in zip(graph_years, graph_popul):
-#     label = "{:.2f}".format(y)
-#     plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
+
+if printLabels:
+    for x,y in zip(graph_years, graph_popul):
+        label = "{:.2f}".format(y)
+        plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
 
 
 truth_year = []
@@ -96,6 +97,10 @@ for year, value in input_pop:
 
 plt.plot(truth_year, truth_pop, 'ro-')
 
+if printLabels:
+    for x,y in zip(truth_year, truth_pop):
+        label = "{:.2f}".format(y)
+        plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
 
 
 plt.show()
