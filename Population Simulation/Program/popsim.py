@@ -4,29 +4,42 @@ import matplotlib.pyplot as plt
 import csv
 import sys
 import os
+import argparse
 
-#Starting Population
+# Default variables
 P0 = 19028802
-SimYears = 11
+SimYears = 3
 printLabels = True
+in_fileName = ""
 
-#Vars
+# Add command line arguments and inputs
+parser = argparse.ArgumentParser(description='Run a population simulation on given input data.')
+parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Input file location")
+parser.add_argument('-p', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
+parser.add_argument('-s', type=int, nargs=1, required=False, help="Provide an integer value for number of years to simulate")
+args = parser.parse_args()
+
+# Set input csv filename from arguement
+in_fileName = getattr(args, "input")[0]
+
+# Set value of starting population
+if type(None) != type(getattr(args, "p")):
+    P0 = int(getattr(args, "p")[0])
+
+# Set value of number of years to simulate
+if type(None) != type(getattr(args, "s")):
+    SimYears = int(getattr(args, "s")[0])
+
+# program vars
 graph_years = []
 graph_popul = []
 
 # variables for parsing the input data file
-in_fileName = []
 input_births = []
 input_deaths = []
 input_pop = []
 
-
-if len(sys.argv) < 2:
-    print("Please provide an input datafile \n Usage: popsim.py input_file.csv")
-    exit(1)
-
 # Parse CSV input file
-in_fileName = sys.argv[1]
 sanitised_filename = os.path.basename(in_fileName)
 print("Reading from file: " + sanitised_filename + "...")
 
@@ -48,6 +61,8 @@ with open(in_fileName, mode = 'r') as csv_file:
 
 #Itteration
 class Population():
+    
+    # Constructor
     def __init__(self):
         self.year = 2000
         self.pop = P0
@@ -55,10 +70,12 @@ class Population():
         graph_popul.append(self.pop)
         print(self.year, self.pop)
 
+    # Runs the simyear function for inputted number of years
     def simulate(self, count):
         for i in range(count):
             self.simyear()
 
+    # Simulate Year
     def  simyear(self):
         for year, value in input_deaths:
             if year == self.year:
@@ -76,6 +93,7 @@ class Population():
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
 
+# Plot stuffs
 sim = Population()
 sim.simulate( SimYears )
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
