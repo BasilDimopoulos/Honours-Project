@@ -7,9 +7,8 @@ import os
 import argparse
 
 # Default variables
-P0 = 19028802
 SimYears = 3
-printLabels = True
+printLabels = False
 in_fileName = ""
 
 # Add command line arguments and inputs
@@ -17,14 +16,17 @@ parser = argparse.ArgumentParser(description='Run a population simulation on giv
 parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Input file location (Required Value)")
 parser.add_argument('-p', '--population', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
 parser.add_argument('-d', '--duration',type=int, nargs=1, required=False, help="Provide an integer value for number duration to run the simulate for, in years")
+parser.add_argument('-l', '--labels', action='store_true', help="Enable Labels on output graph")
+parser.add_argument('-s', '--save', type=str, nargs=1, required=False, help="Output file (.png)")
+parser.add_argument('-nd', '--nodisplay', action='store_false', help="Disables gui output")
 args = parser.parse_args()
 
 # Set input csv filename from arguement
 in_fileName = getattr(args, "input")[0]
 
-# Set value of starting population
-if type(None) != type(getattr(args, "population")):
-    P0 = int(getattr(args, "population")[0])
+# Set label toggle
+if args.labels:
+    printLabels = True
 
 # Set value of number of years to duration
 if type(None) != type(getattr(args, "duration")):
@@ -58,8 +60,27 @@ with open(in_fileName, mode = 'r') as csv_file:
         elif row["Measure"] == "Population":
             input_pop.append((int(row["Time"]),int(row["Value"])))
 
+# Custom sort function to sort input data by years
+def sortYears(elem):
+    return elem[0]
 
-#Itteration
+# Sort all the input data by ascending years
+input_births.sort(key=sortYears)
+input_deaths.sort(key=sortYears)
+input_pop.sort(key=sortYears)
+
+# Set starting population
+P0 = input_pop[0][1]
+
+# Set value of starting population if paramater set
+if type(None) != type(getattr(args, "population")):
+    P0 = int(getattr(args, "population")[0])
+
+
+prev_birthRate = 0
+prev_deathRate = 0
+
+# Iteration
 class Population():
     
     # Constructor
@@ -77,18 +98,33 @@ class Population():
 
     # Simulate Year
     def  simyear(self):
-        for year, value in input_deaths:
-            if year == self.year:
-                DeathRate = value / self.pop
-                break
+        global prev_birthRate
+        global prev_deathRate
 
-        for year, value in input_births:
-            if year == self.year:
-                BirthRate = value / self.pop
+        found = False
+        for countYear, value in input_deaths:
+            if countYear == self.year:
+                deathRate = value / self.pop
+                found = True
                 break
+        if found:
+            prev_deathRate = deathRate
+        else:
+            deathRate = prev_deathRate
+
+        found = False
+        for countYear, value in input_births:
+            if countYear == self.year:
+                birthRate = value / self.pop
+                found = True
+                break
+        if found:
+            prev_birthRate = birthRate
+        else:
+            birthRate = prev_birthRate
             
         self.year = self.year + 1
-        self.pop = self.pop + self.pop*BirthRate - self.pop*DeathRate
+        self.pop = self.pop + self.pop*birthRate - self.pop*deathRate
         graph_years.append(self.year)
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
@@ -121,4 +157,10 @@ if printLabels:
         plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
 
 
-plt.show()
+# Save figure to file depending on console arguement
+if args.save:
+    plt.savefig(getattr(args, "save")[0] + ".png", dpi=400)
+
+# Disable output display
+if args.nodisplay:   
+    plt.show()
