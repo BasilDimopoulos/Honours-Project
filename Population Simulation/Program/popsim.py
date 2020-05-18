@@ -14,21 +14,21 @@ in_fileName = ""
 
 # Add command line arguments and inputs
 parser = argparse.ArgumentParser(description='Run a population simulation on given input data.')
-parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Input file location")
-parser.add_argument('-p', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
-parser.add_argument('-s', type=int, nargs=1, required=False, help="Provide an integer value for number of years to simulate")
+parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Input file location (Required Value)")
+parser.add_argument('-p', '--population', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
+parser.add_argument('-d', '--duration',type=int, nargs=1, required=False, help="Provide an integer value for number duration to run the simulate for, in years")
 args = parser.parse_args()
 
 # Set input csv filename from arguement
 in_fileName = getattr(args, "input")[0]
 
 # Set value of starting population
-if type(None) != type(getattr(args, "p")):
-    P0 = int(getattr(args, "p")[0])
+if type(None) != type(getattr(args, "population")):
+    P0 = int(getattr(args, "population")[0])
 
-# Set value of number of years to simulate
-if type(None) != type(getattr(args, "s")):
-    SimYears = int(getattr(args, "s")[0])
+# Set value of number of years to duration
+if type(None) != type(getattr(args, "duration")):
+    SimYears = int(getattr(args, "duration")[0])
 
 # program vars
 graph_years = []
