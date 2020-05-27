@@ -10,10 +10,13 @@ import argparse
 SimYears = 3
 printLabels = False
 in_fileName = ""
+if_migration = False
+input_migration = []
 
 # Add command line arguments and inputs
 parser = argparse.ArgumentParser(description='Run a population simulation on given input data.')
 parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Input file location (Required Value)")
+parser.add_argument('-m', '--migration', type=str, nargs=1, required=False, help="Input file location of migration data")
 parser.add_argument('-p', '--population', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
 parser.add_argument('-d', '--duration',type=int, nargs=1, required=False, help="Provide an integer value for number duration to run the simulate for, in years")
 parser.add_argument('-l', '--labels', action='store_true', help="Enable Labels on output graph")
@@ -27,6 +30,20 @@ in_fileName = getattr(args, "input")[0]
 # Set label toggle
 if args.labels:
     printLabels = True
+
+# Migration toggle
+if type(None) != type(getattr(args, "migration")):
+    if_migration = True
+    migration_filename = os.path.basename(getattr(args, "migration")[0])
+    with open(migration_filename, mode = "r") as csv_file:
+        reader = csv.DictReader(csv_file)
+        line_count = 0
+        for row in reader:
+            if line_count == 0:
+                line_count += 1
+            if row["Measure"] == "Migration":
+                input_migration.append((int(row["Time"]),int(row["Value"])))
+
 
 # Set value of number of years to duration
 if type(None) != type(getattr(args, "duration")):
@@ -133,7 +150,7 @@ class Population():
 sim = Population()
 sim.simulate( SimYears )
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
-plt.plot(graph_years, graph_popul, 'bo-')
+plt.plot(graph_years, graph_popul, 'bo-', label="Estimated")
 plt.ylabel('Population')
 plt.xlabel('Year')
 
@@ -145,11 +162,21 @@ if printLabels:
 
 truth_year = []
 truth_pop = []
+
+migration_year = []
+migration_pop = []
+
 for year, value in input_pop:
     truth_year.append(year)
     truth_pop.append(value)
+    if if_migration:
+        for year_m, value_m in input_migration:
+            if year == year_m:
+                migration_year.append(year)
+                migration_pop.append(value-value_m)
 
-plt.plot(truth_year, truth_pop, 'ro-')
+plt.plot(truth_year, truth_pop, 'ro-', label="Truth Data")
+plt.plot(migration_year, migration_pop, 'mo-', label="Migration Truth Data")
 
 if printLabels:
     for x,y in zip(truth_year, truth_pop):
