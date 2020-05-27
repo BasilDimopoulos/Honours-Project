@@ -34,7 +34,6 @@ if args.labels:
 # Migration:
 if args.migration:
     if_migration = True
-    print("Migration Enabled")
 
 
 # Set value of number of years to duration
@@ -60,7 +59,6 @@ with open(in_fileName, mode = 'r') as csv_file:
     for row in reader:
         # headers line
         if line_count == 0:
-            # print(f'Column names are {", ".join(row)}')
             line_count += 1
         if row["Measure"] == "Deaths":
             input_deaths.append((int(row["Time"]),int(row["Value"])))
@@ -160,21 +158,25 @@ truth_pop = []
 migration_year = []
 migration_pop = []
 
+# Calculate Truth Data
 for year, value in input_pop:
     truth_year.append(year)
     truth_pop.append(value)
     if if_migration:
+
+        # Calculate Migration
         for year_m, value_m in input_migration:
-            # print({year} +" "+ {year_m})
             if year == year_m:
                 migration_year.append(year)
                 migration_pop.append(value-value_m)
 
+# Plot out all of the truth data
 plt.plot(truth_year, truth_pop, 'ro-', label="Truth Data")
 if if_migration:
     plt.plot(migration_year, migration_pop, 'mo-', label="Migration Truth Data")
 plt.legend()
 
+# Show labels
 if printLabels:
     for x,y in zip(truth_year, truth_pop):
         label = "{:.2f}".format(y)
