@@ -199,7 +199,9 @@ if not args.nodisplayedtruth:
     plt.plot(truth_year, truth_pop, 'ro-', label="Truth Data")
     if if_migration:
         plt.plot(migration_year, migration_pop, 'mo-', label="Migration Truth Data")
-    plt.legend()
+
+#Put legend onto the graph
+plt.legend()
 
 # Show labels
 if printLabels:
