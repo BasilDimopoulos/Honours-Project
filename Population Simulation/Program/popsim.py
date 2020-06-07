@@ -19,6 +19,7 @@ parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Inp
 parser.add_argument('-p', '--population', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
 parser.add_argument('-d', '--duration',type=int, nargs=1, required=False, help="Provide an integer value for number duration to run the simulate for, in years")
 parser.add_argument('-l', '--labels', action='store_true', help="Enable Labels on output graph")
+parser.add_argument('-ut', '--usetruth', action='store_true', help="Use truth data years for output")
 parser.add_argument('-s', '--save', type=str, nargs=1, required=False, help="Output file (.png)")
 parser.add_argument('-nd', '--nodisplay', action='store_false', help="Disables gui output")
 args = parser.parse_args()
@@ -148,6 +149,13 @@ class Population():
             
         self.year = self.year + 1
         self.pop = self.pop + self.pop*birthRate - self.pop*deathRate + migration
+
+        if args.usetruth:
+            for countYear, value in input_pop:
+                if countYear == self.year:
+                    self.pop = value
+                    break
+
         graph_years.append(self.year)
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
