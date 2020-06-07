@@ -16,7 +16,7 @@ input_migration = []
 # Add command line arguments and inputs
 parser = argparse.ArgumentParser(description='Run a population simulation on given input data.')
 parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Input file location (Required Value)")
-parser.add_argument('-m', '--migration', action='store_true', help="Calculate migration data (Requires migraion data in input csv")
+# parser.add_argument('-m', '--migration', action='store_true', help="Calculate migration data (Requires migraion data in input csv")
 parser.add_argument('-p', '--population', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
 parser.add_argument('-d', '--duration',type=int, nargs=1, required=False, help="Provide an integer value for number duration to run the simulate for, in years")
 parser.add_argument('-l', '--labels', action='store_true', help="Enable Labels on output graph")
@@ -32,8 +32,8 @@ if args.labels:
     printLabels = True
 
 # Migration:
-if args.migration:
-    if_migration = True
+# if args.migration:
+#     if_migration = True
 
 
 # Set value of number of years to duration
@@ -77,6 +77,7 @@ def sortYears(elem):
 input_births.sort(key=sortYears)
 input_deaths.sort(key=sortYears)
 input_pop.sort(key=sortYears)
+input_migration.sort(key=sortYears)
 
 # Set starting population
 P0 = input_pop[0][1]
@@ -88,6 +89,7 @@ if type(None) != type(getattr(args, "population")):
 
 prev_birthRate = 0
 prev_deathRate = 0
+prev_migration = 0
 
 # Iteration
 class Population():
@@ -109,6 +111,7 @@ class Population():
     def  simyear(self):
         global prev_birthRate
         global prev_deathRate
+        global prev_migration
 
         found = False
         for countYear, value in input_deaths:
@@ -131,9 +134,20 @@ class Population():
             prev_birthRate = birthRate
         else:
             birthRate = prev_birthRate
+
+        found = False
+        for countYear, value in input_migration:
+            if countYear == self.year:
+                migration = value
+                found = True
+                break
+        if found:
+            prev_migration = migration
+        else:
+            migration = prev_migration
             
         self.year = self.year + 1
-        self.pop = self.pop + self.pop*birthRate - self.pop*deathRate
+        self.pop = self.pop + self.pop*birthRate - self.pop*deathRate + migration
         graph_years.append(self.year)
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
