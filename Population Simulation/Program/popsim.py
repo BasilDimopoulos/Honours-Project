@@ -19,6 +19,8 @@ parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Inp
 parser.add_argument('-p', '--population', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
 parser.add_argument('-d', '--duration',type=int, nargs=1, required=False, help="Provide an integer value for number duration to run the simulate for, in years")
 parser.add_argument('-l', '--labels', action='store_true', help="Enable Labels on output graph")
+parser.add_argument('-ut', '--usetruth', action='store_true', help="Use truth data years for output")
+parser.add_argument('-ndt', '--nodisplayedtruth', action='store_true', help="Don't display truth data on output graph")
 parser.add_argument('-s', '--save', type=str, nargs=1, required=False, help="Output file (.png)")
 parser.add_argument('-nd', '--nodisplay', action='store_false', help="Disables gui output")
 args = parser.parse_args()
@@ -148,6 +150,13 @@ class Population():
             
         self.year = self.year + 1
         self.pop = self.pop + self.pop*birthRate - self.pop*deathRate + migration
+
+        if args.usetruth:
+            for countYear, value in input_pop:
+                if countYear == self.year:
+                    self.pop = value
+                    break
+
         graph_years.append(self.year)
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
@@ -156,6 +165,7 @@ class Population():
 sim = Population()
 sim.simulate( SimYears )
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
+plt.ticklabel_format(style='plain', axis='x', useMathText=True)
 plt.plot(graph_years, graph_popul, 'bo-', label="Estimated")
 plt.ylabel('Population')
 plt.xlabel('Year')
@@ -185,9 +195,12 @@ for year, value in input_pop:
                 migration_pop.append(value-value_m)
 
 # Plot out all of the truth data
-plt.plot(truth_year, truth_pop, 'ro-', label="Truth Data")
-if if_migration:
-    plt.plot(migration_year, migration_pop, 'mo-', label="Migration Truth Data")
+if not args.nodisplayedtruth:
+    plt.plot(truth_year, truth_pop, 'ro-', label="Truth Data")
+    if if_migration:
+        plt.plot(migration_year, migration_pop, 'mo-', label="Migration Truth Data")
+
+#Put legend onto the graph
 plt.legend()
 
 # Show labels
