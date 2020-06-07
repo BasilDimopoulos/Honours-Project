@@ -10,10 +10,12 @@ import argparse
 SimYears = 3
 printLabels = False
 in_fileName = ""
+if_migration = False
 
 # Add command line arguments and inputs
 parser = argparse.ArgumentParser(description='Run a population simulation on given input data.')
 parser.add_argument('-i', '--input', type=str, nargs=1, required=True, help="Input file location (Required Value)")
+# parser.add_argument('-m', '--migration', action='store_true', help="Calculate migration data (Requires migraion data in input csv")
 parser.add_argument('-p', '--population', type=int, nargs=1, required=False, help="Provide an integer value for starting population")
 parser.add_argument('-d', '--duration',type=int, nargs=1, required=False, help="Provide an integer value for number duration to run the simulate for, in years")
 parser.add_argument('-l', '--labels', action='store_true', help="Enable Labels on output graph")
@@ -28,6 +30,11 @@ in_fileName = getattr(args, "input")[0]
 if args.labels:
     printLabels = True
 
+# Migration:
+# if args.migration:
+#     if_migration = True
+
+
 # Set value of number of years to duration
 if type(None) != type(getattr(args, "duration")):
     SimYears = int(getattr(args, "duration")[0])
@@ -40,6 +47,7 @@ graph_popul = []
 input_births = []
 input_deaths = []
 input_pop = []
+input_migration = []
 
 # Parse CSV input file
 sanitised_filename = os.path.basename(in_fileName)
@@ -51,7 +59,6 @@ with open(in_fileName, mode = 'r') as csv_file:
     for row in reader:
         # headers line
         if line_count == 0:
-            # print(f'Column names are {", ".join(row)}')
             line_count += 1
         if row["Measure"] == "Deaths":
             input_deaths.append((int(row["Time"]),int(row["Value"])))
@@ -59,6 +66,8 @@ with open(in_fileName, mode = 'r') as csv_file:
             input_births.append((int(row["Time"]),int(row["Value"])))
         elif row["Measure"] == "Population":
             input_pop.append((int(row["Time"]),int(row["Value"])))
+        elif row["Measure"] == "Migration":
+            input_migration.append((int(row["Time"]),int(row["Value"])))
 
 # Custom sort function to sort input data by years
 def sortYears(elem):
@@ -68,6 +77,7 @@ def sortYears(elem):
 input_births.sort(key=sortYears)
 input_deaths.sort(key=sortYears)
 input_pop.sort(key=sortYears)
+input_migration.sort(key=sortYears)
 
 # Set starting population
 P0 = input_pop[0][1]
@@ -79,6 +89,7 @@ if type(None) != type(getattr(args, "population")):
 
 prev_birthRate = 0
 prev_deathRate = 0
+prev_migration = 0
 
 # Iteration
 class Population():
@@ -100,6 +111,7 @@ class Population():
     def  simyear(self):
         global prev_birthRate
         global prev_deathRate
+        global prev_migration
 
         found = False
         for countYear, value in input_deaths:
@@ -122,9 +134,20 @@ class Population():
             prev_birthRate = birthRate
         else:
             birthRate = prev_birthRate
+
+        found = False
+        for countYear, value in input_migration:
+            if countYear == self.year:
+                migration = value
+                found = True
+                break
+        if found:
+            prev_migration = migration
+        else:
+            migration = prev_migration
             
         self.year = self.year + 1
-        self.pop = self.pop + self.pop*birthRate - self.pop*deathRate
+        self.pop = self.pop + self.pop*birthRate - self.pop*deathRate + migration
         graph_years.append(self.year)
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
@@ -133,7 +156,7 @@ class Population():
 sim = Population()
 sim.simulate( SimYears )
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
-plt.plot(graph_years, graph_popul, 'bo-')
+plt.plot(graph_years, graph_popul, 'bo-', label="Estimated")
 plt.ylabel('Population')
 plt.xlabel('Year')
 
@@ -145,12 +168,29 @@ if printLabels:
 
 truth_year = []
 truth_pop = []
+
+migration_year = []
+migration_pop = []
+
+# Calculate Truth Data
 for year, value in input_pop:
     truth_year.append(year)
     truth_pop.append(value)
+    if if_migration:
 
-plt.plot(truth_year, truth_pop, 'ro-')
+        # Calculate Migration
+        for year_m, value_m in input_migration:
+            if year == year_m:
+                migration_year.append(year)
+                migration_pop.append(value-value_m)
 
+# Plot out all of the truth data
+plt.plot(truth_year, truth_pop, 'ro-', label="Truth Data")
+if if_migration:
+    plt.plot(migration_year, migration_pop, 'mo-', label="Migration Truth Data")
+plt.legend()
+
+# Show labels
 if printLabels:
     for x,y in zip(truth_year, truth_pop):
         label = "{:.2f}".format(y)
