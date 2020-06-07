@@ -11,7 +11,6 @@ SimYears = 3
 printLabels = False
 in_fileName = ""
 if_migration = False
-input_migration = []
 
 # Add command line arguments and inputs
 parser = argparse.ArgumentParser(description='Run a population simulation on given input data.')
@@ -48,6 +47,7 @@ graph_popul = []
 input_births = []
 input_deaths = []
 input_pop = []
+input_migration = []
 
 # Parse CSV input file
 sanitised_filename = os.path.basename(in_fileName)
