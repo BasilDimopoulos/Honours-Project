@@ -5,6 +5,7 @@ import csv
 import sys
 import os
 import argparse
+import math
 
 # Default variables
 SimYears = 3
@@ -181,6 +182,13 @@ truth_pop = []
 
 migration_year = []
 migration_pop = []
+
+#Fix x axis
+maxyear = max(int(input_pop[len(input_pop)-1][0]), int(input_pop[0][0]) + int(SimYears))
+minyear = int(input_pop[0][0])
+plt.xticks(range(math.floor(minyear), math.floor(maxyear)+1))
+plt.locator_params(axis="x", nbins=6)
+plt.minorticks_on()
 
 # Calculate Truth Data
 for year, value in input_pop:
