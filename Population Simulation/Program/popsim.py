@@ -199,19 +199,22 @@ class Population():
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
 
-# Plot stuffs
+# Textual outputs
 sim = Population()
 sim.simulate( SimYears )
 
-# Print the final population groups if enabled
+# Calculate and print the final population groups if enabled
 if agesEnabled == True:
     print("Approximate population age groups in " + str(graph_years[-1]) + " are:")
+    ageGroupPops = []
     for i in (ageGroups):
         print(str(i[0]), end = '\t')
         print(str(i[1]) + "%", end = '\t')
-        print(str(round(graph_popul[-1] * i[1])))
+        print(str(round(graph_popul[-1] * (i[1]/100))))
+        ageGroupPops.append(round(graph_popul[-1] * (i[1]/100)))
     print()
 
+# Plot stuffs
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
 plt.ticklabel_format(style='plain', axis='x', useMathText=True)
 plt.plot(graph_years, graph_popul, 'bo-', label="Estimated")
