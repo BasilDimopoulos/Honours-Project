@@ -62,10 +62,15 @@ if args.agegroups:
     print()
     if type(None) != type(getattr(args, "ageratios")):
         total = sum(getattr(args, "ageratios"))
+        # error checks
         if round(total) != 100:
             print("The sum of the given proportions is not 100, please correct the input values:")
             print(getattr(args, "ageratios"))
             exit(1)
+        for i in getattr(args, "ageratios"):
+            if i < 0:
+                print("Invalid proportion given: " + str(i) + " must be >= 0")
+                exit(1)
         print("The specified age ratios are: ")
         ageRatios.clear()
         for i in getattr(args, "ageratios"):
@@ -212,7 +217,6 @@ if agesEnabled == True:
         print(str(i[1]) + "%", end = '\t')
         print(str(round(graph_popul[-1] * (i[1]/100))))
         ageGroupPops.append(round(graph_popul[-1] * (i[1]/100)))
-    print()
 
 # Plot stuffs
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
