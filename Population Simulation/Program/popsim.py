@@ -24,6 +24,8 @@ parser.add_argument('-ut', '--usetruth', action='store_true', help="Use truth da
 parser.add_argument('-ndt', '--nodisplayedtruth', action='store_true', help="Don't display truth data on output graph")
 parser.add_argument('-s', '--save', type=str, nargs=1, required=False, help="Output file (.png)")
 parser.add_argument('-nd', '--nodisplay', action='store_false', help="Disables gui output")
+parser.add_argument('-ag', '--agegroups', action='store_true', help="Enable the use of age groups, to be used with -ar/--ageratios")
+parser.add_argument('-ar', '--ageratios',type=float, nargs=3, required=False, help="Provide the proportion of each age group in the population (0-19, 20-49, 50+) as a pecentage.")
 args = parser.parse_args()
 
 # Set input csv filename from arguement
@@ -41,6 +43,40 @@ if args.labels:
 # Set value of number of years to duration
 if type(None) != type(getattr(args, "duration")):
     SimYears = int(getattr(args, "duration")[0])
+
+# Age group options and variables
+# Default age ranges
+ageRanges = [(0,19), (20,49), (50,125)]
+# Default proprtions for age ranges
+ageRatios = [24.6,41.8,33.5]
+# Age group and proportion pairs
+ageGroups = 0
+
+# Set 
+if args.agegroups:
+    agegroups = True
+    print("Age groups are enabled, the groups are:")
+    for i in ageRanges:
+        print(i, end = ' ')
+    print()
+    if type(None) != type(getattr(args, "ageratios")):
+        total = sum(getattr(args, "ageratios"))
+        if round(total) != 100:
+            print("The sum of the given proportions is not 100, please correct the input values:")
+            print(getattr(args, "ageratios"))
+            exit(1)
+        print("The specified age ratios are: ")
+        ageRatios.clear()
+        for i in getattr(args, "ageratios"):
+            ageRatios.append(i)
+            print(str(i), end = '\t')
+        print()
+    else:
+        print("Proportions for age groups not provided, using default (AUS 2019)")
+        for i in ageRatios:
+            print(str(i), end = '\t')
+        print()
+    ageGroups = [(ageRanges[0], ageRatios[0]), (ageRanges[1], ageRatios[1]), (ageRanges[2], ageRatios[2])]
 
 # program vars
 graph_years = []
