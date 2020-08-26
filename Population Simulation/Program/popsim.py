@@ -220,11 +220,22 @@ plt.ticklabel_format(style='plain', axis='x', useMathText=True)
 plt.plot(graph_years, graph_popul, 'bo-', label="Estimated")
 plt.ylabel('Population')
 plt.xlabel('Year')
-
 if printLabels:
     for x,y in zip(graph_years, graph_popul):
         label = "{:.2f}".format(y)
         plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
+
+# Plot age groups if enabled
+if agesEnabled:
+    ageGroupCount = 0
+    plt.axvline(graph_years[-1], 0, graph_popul[-1])
+    for i in ageGroupPops:
+        plt.plot(graph_years[-1], i, 'go', label = "Ages"+ str(ageGroups[ageGroupCount][0]))
+        ageGroupCount = ageGroupCount + 1
+    if printLabels:
+        for i in (ageGroupPops):
+            label = i
+            plt.annotate(label, (graph_years[-1],i),textcoords="offset points", xytext=(0,10), ha='center')
 
 
 truth_year = []
