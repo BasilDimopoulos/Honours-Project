@@ -88,6 +88,13 @@ class TESTING(unittest.TestCase):
         expected = ['usage: popsim.py [-h] -i INPUT [-p POPULATION] [-d DURATION] [-l] [-ut] [-ndt]', '                 [-s SAVE] [-nd]', '', 'Run a population simulation on given input data.', '', 'optional arguments:', '  -h, --help            show this help message and exit', '  -i INPUT, --input INPUT', '                        Input file location (Required Value)', '  -p POPULATION, --population POPULATION', '                        Provide an integer value for starting population', '  -d DURATION, --duration DURATION', '                        Provide an integer value for number duration to run', '                        the simulate for, in years', '  -l, --labels          Enable Labels on output graph', '  -ut, --usetruth       Use truth data years for output', '  -ndt, --nodisplayedtruth', "                        Don't display truth data on output graph", '  -s SAVE, --save SAVE  Output file (.png)', '  -nd, --nodisplay      Disables gui output']
         self.assertEqual(out, expected)
 
+    # Test 10: Display test
+    @unittest.skip("Skipping Visual Display Test")
+    def test10(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv"
+        out = runCommand(cmd)[0]
+        expected = ['Reading from file: test1.csv...', '2000 19028802', '2001 19150147', '2002 19267997', '2003 19385278']
+        self.assertEqual(out, expected)
 
     # Fail Example
     # @unittest.skip
@@ -98,7 +105,7 @@ class TESTING(unittest.TestCase):
     #     self.assertEqual(out, expected)
 
 # Start unit tests
-print("Population Simulation Test Suite:")
+print("Population Simulation Test Suite:     (Add -v for verbose output)")
 print("----------------------------------------------------------------------")
 print("")
 if __name__ == '__main__':
