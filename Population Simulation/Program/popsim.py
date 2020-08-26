@@ -24,6 +24,7 @@ parser.add_argument('-ut', '--usetruth', action='store_true', help="Use truth da
 parser.add_argument('-ndt', '--nodisplayedtruth', action='store_true', help="Don't display truth data on output graph")
 parser.add_argument('-s', '--save', type=str, nargs=1, required=False, help="Output file (.png)")
 parser.add_argument('-nd', '--nodisplay', action='store_false', help="Disables gui output")
+parser.add_argument('-dpi', '--dpi', type=int, nargs=1, required=False, help="Set DPI for final file output")
 args = parser.parse_args()
 
 # Set input csv filename from arguement
@@ -220,7 +221,10 @@ if printLabels:
 
 # Save figure to file depending on console arguement
 if args.save:
-    plt.savefig(getattr(args, "save")[0] + ".png", dpi=400)
+    if args.dpi == None:
+        plt.savefig(getattr(args, "save")[0] + ".png", dpi=400)
+    else:
+        plt.savefig(getattr(args, "save")[0] + ".png", dpi=getattr(args, "dpi")[0])
 
 # Disable output display
 if args.nodisplay:   
