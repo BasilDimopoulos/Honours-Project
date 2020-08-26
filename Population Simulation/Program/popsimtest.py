@@ -46,9 +46,48 @@ class TESTING(unittest.TestCase):
         out = runCommand(cmd)[0]
         img_calc  = Image.open('test4.png')
         img_truth = Image.open('test_data/test4-truth.png') 
-
         self.assertEqual(list(img_calc.getdata()), list(img_truth.getdata()))
         runCommand("rm test4.png")
+
+    # Test 5: Test with different starting population
+    def test5(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -d 10 -nd -p 100"
+        out = runCommand(cmd)[0]
+        expected = ['Reading from file: test1.csv...', '2000 100', '2001 121444', '2002 239295', '2003 356576', '2004 475445', '2005 735983', '2006 1026942', '2007 1361542', '2008 1759870', '2009 2233886', '2010 2641279']
+        self.assertEqual(out, expected)
+
+    # Test 6: Test with different number of years
+    def test6(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -nd"
+        out = runCommand(cmd)[0]
+        expected = ['Reading from file: test1.csv...', '2000 19028802', '2001 19150147', '2002 19267997', '2003 19385278']
+        self.assertEqual(out, expected)
+    
+    # Test 7: Test output image if no truth data is displayed
+    def test7(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -ndt -nd -s test7"
+        out = runCommand(cmd)[0]
+        img_calc  = Image.open("test7.png")
+        img_truth = Image.open("test_data/test7-truth.png")
+        self.assertEqual(list(img_calc.getdata()), list(img_truth.getdata()))
+        runCommand("rm test7.png")    
+
+    # Test 8: Test output image if labels are printed
+    def test8(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -l -nd -s test8"
+        out = runCommand(cmd)[0]
+        img_calc  = Image.open("test8.png")
+        img_truth = Image.open("test_data/test8-truth.png")
+        self.assertEqual(list(img_calc.getdata()), list(img_truth.getdata()))
+        runCommand("rm test8.png")    
+
+    # Test 9: Properly displays help menu
+    def test9(self):
+        cmd = "python3 popsim.py --help"
+        out = runCommand(cmd)[0]
+        expected = ['usage: popsim.py [-h] -i INPUT [-p POPULATION] [-d DURATION] [-l] [-ut] [-ndt]', '                 [-s SAVE] [-nd]', '', 'Run a population simulation on given input data.', '', 'optional arguments:', '  -h, --help            show this help message and exit', '  -i INPUT, --input INPUT', '                        Input file location (Required Value)', '  -p POPULATION, --population POPULATION', '                        Provide an integer value for starting population', '  -d DURATION, --duration DURATION', '                        Provide an integer value for number duration to run', '                        the simulate for, in years', '  -l, --labels          Enable Labels on output graph', '  -ut, --usetruth       Use truth data years for output', '  -ndt, --nodisplayedtruth', "                        Don't display truth data on output graph", '  -s SAVE, --save SAVE  Output file (.png)', '  -nd, --nodisplay      Disables gui output']
+        self.assertEqual(out, expected)
+
 
     # Fail Example
     # @unittest.skip
