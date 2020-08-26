@@ -45,6 +45,7 @@ if type(None) != type(getattr(args, "duration")):
     SimYears = int(getattr(args, "duration")[0])
 
 # Age group options and variables
+agesEnabled = False
 # Default age ranges
 ageRanges = [(0,19), (20,49), (50,125)]
 # Default proprtions for age ranges
@@ -54,7 +55,7 @@ ageGroups = 0
 
 # Set 
 if args.agegroups:
-    agegroups = True
+    agesEnabled = True
     print("Age groups are enabled, the groups are:")
     for i in ageRanges:
         print(i, end = ' ')
@@ -201,6 +202,16 @@ class Population():
 # Plot stuffs
 sim = Population()
 sim.simulate( SimYears )
+
+# Print the final population groups if enabled
+if agesEnabled == True:
+    print("Approximate population age groups in " + str(graph_years[-1]) + " are:")
+    for i in (ageGroups):
+        print(str(i[0]), end = '\t')
+        print(str(i[1]) + "%", end = '\t')
+        print(str(round(graph_popul[-1] * i[1])))
+    print()
+
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
 plt.ticklabel_format(style='plain', axis='x', useMathText=True)
 plt.plot(graph_years, graph_popul, 'bo-', label="Estimated")
