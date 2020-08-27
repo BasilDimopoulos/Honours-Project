@@ -26,6 +26,8 @@ parser.add_argument('-s', '--save', type=str, nargs=1, required=False, help="Out
 parser.add_argument('-nd', '--nodisplay', action='store_false', help="Disables gui output")
 parser.add_argument('-ag', '--agegroups', action='store_true', help="Enable the use of age groups, to be used with -ar/--ageratios")
 parser.add_argument('-ar', '--ageratios',type=float, nargs=3, required=False, help="Provide the proportion of each age group in the population (0-19, 20-49, 50+) as a pecentage.")
+parser.add_argument('-dpi', '--dpi', type=int, nargs=1, required=False, help="Set DPI for final file output")
+
 args = parser.parse_args()
 
 # Set input csv filename from arguement
@@ -285,7 +287,10 @@ if printLabels:
 
 # Save figure to file depending on console arguement
 if args.save:
-    plt.savefig(getattr(args, "save")[0] + ".png", dpi=400)
+    if args.dpi == None:
+        plt.savefig(getattr(args, "save")[0] + ".png", dpi=400)
+    else:
+        plt.savefig(getattr(args, "save")[0] + ".png", dpi=getattr(args, "dpi")[0])
 
 # Disable output display
 if args.nodisplay:   
