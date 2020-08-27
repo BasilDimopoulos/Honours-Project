@@ -23,7 +23,7 @@ class TESTING(unittest.TestCase):
     def test_PS001(self):
         cmd = "python3 popsim.py"
         out = runCommand(cmd)[1]
-        expected = ['usage: popsim.py [-h] -i INPUT [-p POPULATION] [-d DURATION] [-l] [-ut] [-ndt]', '                 [-s SAVE] [-nd] [-dpi DPI]', 'popsim.py: error: the following arguments are required: -i/--input']
+        expected = ['usage: popsim.py [-h] -i INPUT [-p POPULATION] [-d DURATION] [-l] [-ut] [-ndt]', '                 [-s SAVE] [-nd] [-ag] [-ar AGERATIOS AGERATIOS AGERATIOS]', '                 [-dpi DPI]', 'popsim.py: error: the following arguments are required: -i/--input']
         self.assertEqual(out, expected)
 
     # Test_PS002: Test to see if reponse is created for 10 years
@@ -85,7 +85,7 @@ class TESTING(unittest.TestCase):
     def test_PS009(self):
         cmd = "python3 popsim.py --help"
         out = runCommand(cmd)[0]
-        expected = ['usage: popsim.py [-h] -i INPUT [-p POPULATION] [-d DURATION] [-l] [-ut] [-ndt]', '                 [-s SAVE] [-nd] [-dpi DPI]', '', 'Run a population simulation on given input data.', '', 'optional arguments:', '  -h, --help            show this help message and exit', '  -i INPUT, --input INPUT', '                        Input file location (Required Value)', '  -p POPULATION, --population POPULATION', '                        Provide an integer value for starting population', '  -d DURATION, --duration DURATION', '                        Provide an integer value for number duration to run', '                        the simulate for, in years', '  -l, --labels          Enable Labels on output graph', '  -ut, --usetruth       Use truth data years for output', '  -ndt, --nodisplayedtruth', "                        Don't display truth data on output graph", '  -s SAVE, --save SAVE  Output file (.png)', '  -nd, --nodisplay      Disables gui output','  -dpi DPI, --dpi DPI   Set DPI for final file output']
+        expected = ['usage: popsim.py [-h] -i INPUT [-p POPULATION] [-d DURATION] [-l] [-ut] [-ndt]', '                 [-s SAVE] [-nd] [-ag] [-ar AGERATIOS AGERATIOS AGERATIOS]', '                 [-dpi DPI]', '', 'Run a population simulation on given input data.', '', 'optional arguments:', '  -h, --help            show this help message and exit', '  -i INPUT, --input INPUT', '                        Input file location (Required Value)', '  -p POPULATION, --population POPULATION', '                        Provide an integer value for starting population', '  -d DURATION, --duration DURATION', '                        Provide an integer value for number duration to run', '                        the simulate for, in years', '  -l, --labels          Enable Labels on output graph', '  -ut, --usetruth       Use truth data years for output', '  -ndt, --nodisplayedtruth', "                        Don't display truth data on output graph", '  -s SAVE, --save SAVE  Output file (.png)', '  -nd, --nodisplay      Disables gui output', '  -ag, --agegroups      Enable the use of age groups, to be used with', '                        -ar/--ageratios', '  -ar AGERATIOS AGERATIOS AGERATIOS, --ageratios AGERATIOS AGERATIOS AGERATIOS', '                        Provide the proportion of each age group in the', '                        population (0-19, 20-49, 50+) as a pecentage.', '  -dpi DPI, --dpi DPI   Set DPI for final file output']
         self.assertEqual(out, expected)
 
     # Test_PS010: Display test
