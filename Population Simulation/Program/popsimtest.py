@@ -96,6 +96,59 @@ class TESTING(unittest.TestCase):
         expected = ['Reading from file: test1.csv...', '2000 19028802', '2001 19150147', '2002 19267997', '2003 19385278']
         self.assertEqual(out, expected)
 
+    # Test_PS011: Test to see if the default population groups and ratios produce the correct values for 10 year sim
+    def test_PS011(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -d 10 -nd -ag"
+        out = runCommand(cmd)[0]
+        expected = ['Age groups are enabled, the groups are:', '(0, 19) (20, 49) (50, 125) ', 'Proportions for age groups not provided, using default (AUS 2019)', '24.6\t41.8\t33.5\t', 'Reading from file: test1.csv...', '2000 19028802', '2001 19150147', '2002 19267997', '2003 19385278', '2004 19504147', '2005 19764685', '2006 20055644', '2007 20390244', '2008 20788572', '2009 21262588', '2010 21669981', 'Approximate population age groups in 2010 are:', '(0, 19)\t24.6%\t5330815', '(20, 49)\t41.8%\t9058052', '(50, 125)\t33.5%\t7259444']
+        self.assertEqual(out, expected)
+
+    # Test_PS012: Test to see if the default population groups produce correct values for custom ratios
+    def test_PS012(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -d 10 -nd -ag -ar 25 25 50"
+        out = runCommand(cmd)[0]
+        expected = ['Age groups are enabled, the groups are:', '(0, 19) (20, 49) (50, 125) ', 'The specified age ratios are: ', '25.0\t25.0\t50.0\t', 'Reading from file: test1.csv...', '2000 19028802', '2001 19150147', '2002 19267997', '2003 19385278', '2004 19504147', '2005 19764685', '2006 20055644', '2007 20390244', '2008 20788572', '2009 21262588', '2010 21669981', 'Approximate population age groups in 2010 are:', '(0, 19)\t25.0%\t5417495', '(20, 49)\t25.0%\t5417495', '(50, 125)\t50.0%\t10834990']
+        self.assertEqual(out, expected)
+
+    # Test_PS013: Input checking, that population proportions sum to 100
+    def test_PS013(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -d 10 -nd -ag -ar 25 25 35"
+        out = runCommand(cmd)[0]
+        expected = ['Age groups are enabled, the groups are:', '(0, 19) (20, 49) (50, 125) ', 'The sum of the given proportions is not 100, please correct the input values:', '[25.0, 25.0, 35.0]']
+        self.assertEqual(out, expected)
+
+    # Test_PS014: Input checking, that population proportions sum to 100 when rounded to nearest decimal
+    def test_PS014(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -d 10 -nd -ag -ar 24.6 41.8 33.5"
+        out = runCommand(cmd)[0]
+        expected = ['Age groups are enabled, the groups are:', '(0, 19) (20, 49) (50, 125) ', 'The specified age ratios are: ', '24.6\t41.8\t33.5\t', 'Reading from file: test1.csv...', '2000 19028802', '2001 19150147', '2002 19267997', '2003 19385278', '2004 19504147', '2005 19764685', '2006 20055644', '2007 20390244', '2008 20788572', '2009 21262588', '2010 21669981', 'Approximate population age groups in 2010 are:', '(0, 19)\t24.6%\t5330815', '(20, 49)\t41.8%\t9058052', '(50, 125)\t33.5%\t7259444']
+        self.assertEqual(out, expected)
+
+    # Test_PS015: PS015 Visual test to check that the population groups have been graphed without labels
+    def test_PS015(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -nd -s test15 -d 10 -ag"
+        out = runCommand(cmd)[0]
+        img_calc  = Image.open("test15.png")
+        img_truth = Image.open("test_data/test15-truth.png")
+        self.assertEqual(list(img_calc.getdata()), list(img_truth.getdata()))
+        runCommand("rm test15.png")  
+
+    # Test_PS016: Test output image if labels are printed
+    def test_PS016(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -l -nd -s test16 -d 10 -ag"
+        out = runCommand(cmd)[0]
+        img_calc  = Image.open("test16.png")
+        img_truth = Image.open("test_data/test16-truth.png")
+        self.assertEqual(list(img_calc.getdata()), list(img_truth.getdata()))
+        runCommand("rm test16.png")  
+
+    # Test_PS017: Input checking, that population proportions sum to 100 when rounded to nearest decimal
+    def test_PS017(self):
+        cmd = "python3 popsim.py -i test_data/test1.csv -d 10 -nd -ag -ar 50 51 -1"
+        out = runCommand(cmd)[0]
+        expected = ['Age groups are enabled, the groups are:', '(0, 19) (20, 49) (50, 125) ', 'Invalid proportion given: -1.0 must be >= 0']
+        self.assertEqual(out, expected)
+
     # Fail Example
     # @unittest.skip
     # def test_fail(self):
