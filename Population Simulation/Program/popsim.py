@@ -24,7 +24,10 @@ parser.add_argument('-ut', '--usetruth', action='store_true', help="Use truth da
 parser.add_argument('-ndt', '--nodisplayedtruth', action='store_true', help="Don't display truth data on output graph")
 parser.add_argument('-s', '--save', type=str, nargs=1, required=False, help="Output file (.png)")
 parser.add_argument('-nd', '--nodisplay', action='store_false', help="Disables gui output")
+parser.add_argument('-ag', '--agegroups', action='store_true', help="Enable the use of age groups, to be used with -ar/--ageratios")
+parser.add_argument('-ar', '--ageratios',type=float, nargs=3, required=False, help="Provide the proportion of each age group in the population (0-19, 20-49, 50+) as a pecentage.")
 parser.add_argument('-dpi', '--dpi', type=int, nargs=1, required=False, help="Set DPI for final file output")
+
 args = parser.parse_args()
 
 # Set input csv filename from arguement
@@ -42,6 +45,46 @@ if args.labels:
 # Set value of number of years to duration
 if type(None) != type(getattr(args, "duration")):
     SimYears = int(getattr(args, "duration")[0])
+
+# Age group options and variables
+agesEnabled = False
+# Default age ranges
+ageRanges = [(0,19), (20,49), (50,125)]
+# Default proprtions for age ranges
+ageRatios = [24.6,41.8,33.5]
+# Age group and proportion pairs
+ageGroups = 0
+
+# Set 
+if args.agegroups:
+    agesEnabled = True
+    print("Age groups are enabled, the groups are:")
+    for i in ageRanges:
+        print(i, end = ' ')
+    print()
+    if type(None) != type(getattr(args, "ageratios")):
+        total = sum(getattr(args, "ageratios"))
+        # error checks
+        if round(total) != 100:
+            print("The sum of the given proportions is not 100, please correct the input values:")
+            print(getattr(args, "ageratios"))
+            exit(1)
+        for i in getattr(args, "ageratios"):
+            if i < 0:
+                print("Invalid proportion given: " + str(i) + " must be >= 0")
+                exit(1)
+        print("The specified age ratios are: ")
+        ageRatios.clear()
+        for i in getattr(args, "ageratios"):
+            ageRatios.append(i)
+            print(str(i), end = '\t')
+        print()
+    else:
+        print("Proportions for age groups not provided, using default (AUS 2019)")
+        for i in ageRatios:
+            print(str(i), end = '\t')
+        print()
+    ageGroups = [(ageRanges[0], ageRatios[0]), (ageRanges[1], ageRatios[1]), (ageRanges[2], ageRatios[2])]
 
 # program vars
 graph_years = []
@@ -163,19 +206,42 @@ class Population():
         graph_popul.append(self.pop)
         print(self.year, int(self.pop))
 
-# Plot stuffs
+# Textual outputs
 sim = Population()
 sim.simulate( SimYears )
+
+# Calculate and print the final population groups if enabled
+if agesEnabled == True:
+    print("Approximate population age groups in " + str(graph_years[-1]) + " are:")
+    ageGroupPops = []
+    for i in (ageGroups):
+        print(str(i[0]), end = '\t')
+        print(str(i[1]) + "%", end = '\t')
+        print(str(round(graph_popul[-1] * (i[1]/100))))
+        ageGroupPops.append(round(graph_popul[-1] * (i[1]/100)))
+
+# Plot stuffs
 plt.ticklabel_format(style='sci', axis='y', scilimits=(6,6), useMathText=True)
 plt.ticklabel_format(style='plain', axis='x', useMathText=True)
 plt.plot(graph_years, graph_popul, 'bo-', label="Estimated")
 plt.ylabel('Population')
 plt.xlabel('Year')
-
 if printLabels:
     for x,y in zip(graph_years, graph_popul):
         label = "{:.2f}".format(y)
         plt.annotate(label, (x,y),textcoords="offset points", xytext=(0,10), ha='center')
+
+# Plot age groups if enabled
+if agesEnabled:
+    ageGroupCount = 0
+    plt.axvline(graph_years[-1], 0, graph_popul[-1])
+    for i in ageGroupPops:
+        plt.plot(graph_years[-1], i, 'go', label = "Ages"+ str(ageGroups[ageGroupCount][0]))
+        ageGroupCount = ageGroupCount + 1
+    if printLabels:
+        for i in (ageGroupPops):
+            label = i
+            plt.annotate(label, (graph_years[-1],i),textcoords="offset points", xytext=(0,10), ha='center')
 
 
 truth_year = []
