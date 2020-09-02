@@ -1,0 +1,9 @@
+INSTRUCTIONS FOR RUNNING
+
+For the demo of Covid-19 in Australia, download "epedemic Model of Covid-19 in Australia" 
+
+Install anaconda with jupyter notebooks https://www.anaconda.com/
+
+install these additional packages
+conda install -c plotly plotly-orca==1.2.1
+conda install manimlib
