@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Population Simulation</title>
+    </head>
+    <body>
+        <div id="controls">
+
+            <h1>Population Simulation</h1>
+
+            <form action="/popsim" method="post">
+                <label for="fduration">Duration (Years):</label>
+                <input type="text" id="fduration" name="duration"><br>
+                <label for="fpopulation">Starting Population:</label>
+                <input type="text" id="fpopulation" name="population"><br>
+                <label for="flabels">Labels:</label>
+                <input type="checkbox" id="flabels" name="labels"><br>
+                <label for="fusetruth">Use Truth:</label>
+                <input type="checkbox" id="fusetruth" name="usetruth"><br>
+                <label for="fndt">No Displayed Truth:</label>
+                <input type="checkbox" id="fndt" name="nodisplayedtruth"><br>
+                <label for="fagegroups">Age Groups:</label>
+                <input type="checkbox" id="fagegroups" name="agegroups"><br>
+                <label for="fageratio1">Age Ratios:</label>
+                <input type="text" id="fageratio1" name="ageratio1">
+                <input type="text" id="fageratio2" name="ageratio2">
+                <input type="text" id="fageratio3" name="ageratio3"><br><br>
+
+                <input type="submit">
+            </form>
+        </div>
+        <div id="output">
+
+        </div>
+    </body>
+</html>
