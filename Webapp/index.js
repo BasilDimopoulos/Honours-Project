@@ -8,7 +8,7 @@ const { UV_FS_O_FILEMAP } = require('constants');
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/graphs', express.static("graphs"));
-app.use('/popsim', express.static("pages/popsim.html"));
+app.use('/popsim', express.static("pages/popsim2.html"));
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
