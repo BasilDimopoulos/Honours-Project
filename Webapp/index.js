@@ -1,10 +1,15 @@
+///////////////////////////////
+//      Group 9 - SERP       //
+///////////////////////////////
+
 // Setup requirements
 const express = require('express');
 const fs = require('fs');
 const app = express();
 const session = require('express-session');
 const bodyParser = require('body-parser');
-const { UV_FS_O_FILEMAP } = require('constants');
+const path = require("path");
+const https = require("https");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/graphs', express.static("graphs"));
@@ -16,10 +21,14 @@ app.use(session({
     cookie: { secure: true }
   }));
 
+//////////////////////////////
+//      SERVER ROUTES       //
+//////////////////////////////
+
 // Index Route
-// app.get('/', function(req, res){
-//     res.send("This site is currently under development");
-// });
+app.get('/', function(req, res){
+    res.redirect("/popsim");
+});
 
 // Run pop simulation
 app.post("/popsim", function(req, res){
@@ -73,9 +82,22 @@ app.get('*', function(req, res){
     res.status(404).send("Page not found");
 });
 
-// Start Server
-port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-    console.log('Listening on: ' + (process.env.PORT || 3000))
+////////////////////////////////////////////
+//      Start Server & Manage Certs       //
+////////////////////////////////////////////
+
+// Handle SSL Certificate
+var key = "server.key"
+var cert = "server.cert"
+var port = process.env.PORT || 3000;
+if(fs.existsSync(path.resolve("/etc/letsencrypt/live/remote.joshuawright.tech/privkey.pem"))){
+    key = "/etc/letsencrypt/live/remote.joshuawright.tech/privkey.pem";
+    cert = "/etc/letsencrypt/live/remote.joshuawright.tech/cert.pem";
+}
+https.createServer({
+    key: fs.readFileSync(key),
+    cert: fs.readFileSync(cert)
+}, app).listen(port, function(){
+    console.log('Listening on: ' + port);
 })
