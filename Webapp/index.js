@@ -20,6 +20,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: true }
   }));
+module.exports = app;
 
 //////////////////////////////
 //      SERVER ROUTES       //
@@ -62,9 +63,9 @@ app.post("/popsim", function(req, res){
     // Age Ratios
     if(req.body.ageratio1 != "" && req.body.ageratio2 != ""  && req.body.ageratio3 != ""){
         cmd.push("-ar");
-        cmd.push(eq.body.ageratio1);
-        cmd.push(eq.body.ageratio2);
-        cmd.push(eq.body.ageratio3);
+        cmd.push(req.body.ageratio1);
+        cmd.push(req.body.ageratio2);
+        cmd.push(req.body.ageratio3);
     }
 
     var process = spawn("python3", cmd);
