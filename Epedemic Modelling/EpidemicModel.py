@@ -142,23 +142,35 @@ def main():
     # main execution loop
 
     # main()
-    c1 = Cell("Adelaide")
-    c2 = Cell("Melbourne")
+    c1 = Cell("SA")
+    c2 = Cell("VIC")
+    c3 = Cell("NSW")
 
-    c1.setInitCond([1,27,0,0,500])
+    # E I R D
+    c1.setInitCond([12,3,2,1,50])
     c1.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
     c1.setTimeStep(2)
-    c1.print()
 
-    # print("Time step: " + str(c1.timeStep))
+    c2.setInitCond([5,30,12,20,70])
+    c2.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
+    c2.setTimeStep(2)
+
+    c3.setInitCond([12,15,18,10,80])
+    c3.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
+    c3.setTimeStep(2)
+
+    c1.print()
+    c2.print()
+    c3.print()
+
+
     print("Calculate step...\n")
     c1.updateOutputs()
+    c2.updateOutputs()
+    c3.updateOutputs()
     c1.print()
-    # print(c1.getOutputs())
-
-    print("Calculate step...\n")
-    c1.updateOutputs()
-    c1.print()
+    c2.print()
+    c3.print()
 
 
 
