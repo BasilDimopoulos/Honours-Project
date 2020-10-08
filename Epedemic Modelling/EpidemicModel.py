@@ -14,8 +14,11 @@ class Application:
     initAt = datetime.today()
     # list of all cells
     cells = []
-    timeStep = 0
-    duration = 0
+    # number of days to calulate epidemic functions over, default 2 (= 1 day)
+    timeStep = 2
+    # number of days the simulation will run for
+    duration = 30
+    # the current time of the simulation
     time = 0
 
     # --- End Instance Members ---
@@ -110,12 +113,6 @@ class Cell:
         equationParams = []
         equationParams = self.beta, self.sigma, self.gamma, self.mu, self.x
         return equationParams
-
-    # def setTimeStep(self, step):
-    #     self.timeStep = step
-
-    # def getTimeStep(self):
-    #     return self.timeStep
 
     def updateOutputs(self):
         print("Updating outputs for: " + self.name)
@@ -213,6 +210,7 @@ def nextStep(data):
     for cell in app.cells:
         cell.updateOutputs()
 
+    app.time = app.time + (app.timeStep - 1)
     response['status'] = "Sucessfully progressed to next step"
 
     return response
@@ -220,6 +218,7 @@ def nextStep(data):
 def getAllCells(data):
     response = {}
 
+    response['time'] = app.time
     response['cells'] = []
     for cell in app.cells:
         cellData = {}
@@ -234,6 +233,7 @@ def getAllCells(data):
         cellData['deaths'] = epiOutputs[4]
 
         response['cells'].append(cellData)
+        
 
 
 

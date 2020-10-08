@@ -27,7 +27,7 @@ async def comms(websocket, path):
         indat = json.loads(message)
         print(indat)
 
-        #Do work here -------
+        # -------
         # Parse the json from client to retrieve the control message
         ctrlMsg = indat['control']
         response = ""
@@ -37,7 +37,6 @@ async def comms(websocket, path):
         print(response)
 
         # -------
-
 
         # json.dumps(outdat)
         await websocket.send(response['status'])
