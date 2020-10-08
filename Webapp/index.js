@@ -10,6 +10,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require("path");
 const https = require("https");
+const WebSocket = require("ws");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/graphs', express.static("graphs"));
@@ -71,7 +72,7 @@ app.post("/popsim", function(req, res){
     var process = spawn("python3", cmd);
     process.on('exit', function() {
         res.status(200);
-        out = "<img src=/graphs/" + "image" + ".png width=80%>";
+        var out = "<img src=/graphs/" + "image" + ".png width=80%>";
         res.send(out);
     });
 });
@@ -101,4 +102,29 @@ https.createServer({
     cert: fs.readFileSync(cert)
 }, app).listen(port, function(){
     console.log('Listening on: ' + port);
+})
+
+
+
+// Websocket Server
+var chatlog = [];
+
+const wss = new WebSocket.Server({ port: 3001 });
+
+wss.on("connection", function connection(ws) {
+    ws.on('message', function incoming(message) {
+        console.log("Recieved Message: " + message);
+        if(message == "time"){
+            ws.send(new Date().getTime());
+        } else if (message == "update") {
+            ws.send(chatlog.join("\n"));
+        } else {
+            chatlog.push(message);
+        }
+    });
+
+    ws.on('close', function(){
+        console.log("WS Disconnect");
+    })
+    ws.send("Message Return");
 })

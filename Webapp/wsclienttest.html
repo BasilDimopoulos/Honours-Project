@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WS TEST Client</title>
+
+        <script>
+            console.log("Websocket Client Test");
+            var serverurl = "ws://localhost:3001";
+            WebSocket = new WebSocket(serverurl);
+            WebSocket.onmessage = function(event){
+                console.log(event.data);
+            }
+            WebSocket.onopen = function(event){
+                while(true){
+                    WebSocket.send(prompt());
+                }
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>Open Web Console</p>
+    </body>
+</html>
