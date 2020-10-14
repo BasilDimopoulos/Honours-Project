@@ -7,28 +7,39 @@ eSample = [200,50,20,10,0];
 highlightedSection = new section("NSW", seirdSample, eSample, seirdSamples, seirdSampless,eSample);
 
 function setup(){
-  let render = createCanvas(400,800);
+  // Setup canvas for cell stack
+  parentWidth = $("#cells-stack-table").width();
+  let render = createCanvas(parentWidth, 2000);
+  let cellWidth = parentWidth - (parentWidth * 0.20);
   render.parent("cells-stack");
   background(255);
-  sections.push(new section("NSW", seirdSample, eSample, seirdSamples, seirdSampless,eSample));
-  sections.push(new section("SA", seirdSamples, eSample, seirdSampless, seirdSamples,eSample));
-  sections.push(new section("NSW", seirdSampless, eSample, seirdSampless, seirdSampless,eSample));
-  sections.push(new section("SA", seirdSample, eSample, seirdSampless, seirdSamples,eSample));
-  sections.push(new section("NSW", seirdSample, eSample, seirdSampless, seirdSampless,eSample));
-  sections.push(new section("SA", seirdSample, eSample, seirdSampless, seirdSamples,eSample));
-  sections.push(new section("NSW", seirdSample, eSample, seirdSamples, seirdSampless,eSample));
-  sections.push(new section("NSW", seirdSample, eSample, seirdSamples, seirdSampless,eSample));
-  sections.push(new section("SA", seirdSamples, eSample, seirdSampless, seirdSamples,eSample));
-  sections.push(new section("NSW", seirdSampless, eSample, seirdSampless, seirdSampless,eSample));
-  sections.push(new section("SA", seirdSample, eSample, seirdSampless, seirdSamples,eSample));
-  sections.push(new section("NSW", seirdSample, eSample, seirdSampless, seirdSampless,eSample));
-  sections.push(new section("SA", seirdSample, eSample, seirdSampless, seirdSamples,eSample));
-  sections.push(new section("NSW", seirdSample, eSample, seirdSamples, seirdSampless,eSample));
+
+  // Update Sections
+  sections.push(new section("NSW", seirdSample, eSample, seirdSamples, seirdSampless, eSample, cellWidth));
+  sections.push(new section("SA", seirdSamples, eSample, seirdSampless, seirdSamples, eSample, cellWidth));
+  sections.push(new section("VIC", seirdSampless, eSample, seirdSampless, seirdSampless, eSample, cellWidth));
+  sections.push(new section("WA", seirdSample, eSample, seirdSampless, seirdSamples, eSample, cellWidth));
+  sections.push(new section("QLD", seirdSample, eSample, seirdSampless, seirdSampless, eSample, cellWidth));
+  
+
+
+  // getData(cellWidth);
+
+
+
+  // resizeCanvas( parentWidth, (sections.length * 91));
+
   uiSetup();
 }
 
-function draw(){
-  console.log(frameRate());
+// Update sections from webserver
+function getData(cellWidth){
+  $.getJSON("/model.json", function(data){
+      sections = [];
+      $.each(data["cells"], function(i, val){
+        sections.push(new section(val["name"], val["susceptibles"], val["exposed"], val["infected"], val["recovered"], val["deaths"], cellWidth));
+      });
+  });
 }
 
 function findLargestElement(array){

@@ -1,12 +1,12 @@
 class section{
-  constructor(label,s,e,i,r,d){
+  constructor(label,s,e,i,r,d,width){
     this.s = s;
     this.e = e;
     this.i = i;
     this.r = r;
     this.d = d;
     this.height = 91;
-    this.width = 240;
+    this.width = width;
     this.x=0;
     this.y=0;
     this.label = label;
@@ -71,6 +71,7 @@ class section{
   }
 
   drawSelf(){
+    // this.width = $("#cells-stack-table").width() - ($("#cells-stack-table").width() * 0.2);
     stroke(0);
     noFill();
     rect(this.x,this.y,this.width,this.height);
