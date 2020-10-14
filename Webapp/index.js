@@ -27,12 +27,7 @@ module.exports = app;
 //      SERVER ROUTES       //
 //////////////////////////////
 
-// Index Route
-app.get('/', function(req, res){
-    res.redirect("/popsim");
-});
-
-// Run pop simulation
+// Run pop simulation (S1 Program)
 app.post("/popsim", function(req, res){
     var {spawn} = require("child_process");    
     var cmd = ["../Population Simulation/Program/popsim.py", "-i", "../Population Simulation/Program/test_data/test1.csv", "-nd", "-s", "graphs/image"]
@@ -77,12 +72,45 @@ app.post("/popsim", function(req, res){
     });
 });
 
-// 404
+// Epidemic Modeling Tool Interface and Communication
+const pythonWebsocketAddr = "ws://localhost:8002";
+
+// Index Route
+app.get('/', function(req, res){
+    res.redirect("/popsim");
+});
+
+app.get("/instructor", function(req, res){
+    res.send("Instructor View Goes Here");
+});
+
+app.get("/student", function(req, res){
+    res.send("Student View Goes Here");
+});
+
+
+// TESTING function calls between python model and nodejs
+app.get("/model", function(req, res){
+    const wsc = new WebSocket(pythonWebsocketAddr);
+
+    wsc.on("open", function(){
+        wsc.send(JSON.stringify({control: "getAllCells"}));
+
+        wsc.on("message", function(inmsg){
+            wsc.close(1000);
+            res.send("Message: " + inmsg);
+        });
+    });
+});
+
+
+// 404 error handler
 app.get('*', function(req, res){
     console.log("404");
     console.log("-> " + req.url)
     res.status(404).send("Page not found");
 });
+
 
 
 ////////////////////////////////////////////
@@ -106,25 +134,16 @@ https.createServer({
 
 
 
-// Websocket Server
-var chatlog = [];
-
+// Websocket Server ( Client to Node Js Communication)
 const wss = new WebSocket.Server({ port: 3001 });
 
 wss.on("connection", function connection(ws) {
     ws.on('message', function incoming(message) {
         console.log("Recieved Message: " + message);
-        if(message == "time"){
-            ws.send(new Date().getTime());
-        } else if (message == "update") {
-            ws.send(chatlog.join("\n"));
-        } else {
-            chatlog.push(message);
-        }
+        ws.send(message);
     });
 
     ws.on('close', function(){
         console.log("WS Disconnect");
     })
-    ws.send("Message Return");
 })
