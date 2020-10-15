@@ -1,13 +1,16 @@
 // Global Vars
 var cellcont = [];
 var cellCharts = [];
+var mainLineChart;
+var colours = [ "#FFCD40", "#4abdff", "#39E039", "#ce77e6", "#FF4040" ];
 
 // Draw main cells
 function mainCell(num){
     var mainchart = document.getElementById("maincanvas").getContext("2d");
-    colours = [ "#FFCD40", "#4B51D0", "#39E039", "#ce77e6", "#FF4040" ];
+    if(mainLineChart != undefined) mainLineChart.destroy();
+    $("#maincanvas").empty()
     console.log()
-    var mainLineChart = new Chart(mainchart, {
+    mainLineChart = new Chart(mainchart, {
         type: "doughnut",
         data:{
             labels: ["Susceptible", "Exposed", "Infected", "Recovered", "Deaths"],
@@ -33,16 +36,15 @@ function mainCell(num){
 
 // Draw sidebar cells
 function sideCells(content){    
-    
     // Get array of time stamps for cells
     times = [];
     for(var i = 0; i < content[0]["population"].length; i++) times.push(i);
 
     
-    $("#cells-stack").empty()
+    $("#cells-stack").empty();
     cellCharts = [];
-    colours = [ "#FFCD40", "#4B51D0", "#39E039", "#ce77e6", "#FF4040" ];
 
+    drawLegend();
 
     $.each(content, function(i, key){
         $("#cells-stack").append("<canvas id='sidecell-" + i + "' width=" + $("#cells-stack-table").width() + "px height=200px ></canvas>");
@@ -94,7 +96,7 @@ function sideCells(content){
             },
             options: {
                 title: { display: true, text: key["name"] },
-                legend: { display: isfirst },
+                legend: { display: false },
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {
@@ -116,6 +118,21 @@ function sideCells(content){
     });
 }
 
+// Draw legend for cell stack
+function drawLegend(){
+    var output = "";
+    output += "<div class='row p-3'>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[0] + " '>S</div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[1] + " '>E</div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[2] + " '>I</div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[3] + " '>R</div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[4] + " '>D</div>";
+    output += "</div>";
+    output += "<hr />"
+    $("#cells-stack").append(output);
+}
+
+// make get request for json content
 function getCells(){
     $.getJSON("/testing.json", function(data){
         cellcont = data['cells'];
@@ -125,11 +142,11 @@ function getCells(){
 }
 
 
-
-
 // Main Javascript calls
 $(document).ready(function(){
     getCells();
 });
-
+$( window ).resize(function(){
+    getCells();
+});
 
