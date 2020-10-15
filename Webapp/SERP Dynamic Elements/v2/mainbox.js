@@ -122,11 +122,11 @@ function sideCells(content){
 function drawLegend(){
     var output = "";
     output += "<div class='row p-3'>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[0] + " '>S</div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[1] + " '>E</div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[2] + " '>I</div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[3] + " '>R</div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[4] + " '>D</div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[0] + " '><b>S</b></div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[1] + " '><b>E</b></div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[2] + " '><b>I</b></div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[3] + " '><b>R</b></div>";
+    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[4] + " '><b>D</b></div>";
     output += "</div>";
     output += "<hr />"
     $("#cells-stack").append(output);
