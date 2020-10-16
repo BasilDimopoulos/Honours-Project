@@ -39,57 +39,32 @@ function sideCells(content){
     // Get array of time stamps for cells
     times = [];
     for(var i = 0; i < content[0]["population"].length; i++) times.push(i);
-
     
+    // Empty existing cell stack
     $("#cells-stack").empty();
+    $.each(cellCharts, function(i, key){
+        if(key != undefined) key.destroy();
+    });
     cellCharts = [];
 
+    // Go through JSON input and create Charts
     $.each(content, function(i, key){
         $("#cells-stack").append("<canvas id='sidecell-" + i + "' width=" + $("#cells-stack-table").width() + "px height=200px ></canvas>");
         if(i != (content.length - 1)) $("#cells-stack").append("<hr />");
         var current = document.getElementById("sidecell-" + i).getContext("2d");
         isfirst = (i == 0);
+        
+        // Create cell chat objects
         var newchart = new Chart(current, {
             type: "line",
             data:{
                 labels: times,
                 datasets:[
-                    {
-                        label: "S",
-                        data: key["susceptibles"],
-                        borderColor: colours[0],
-                        pointHighlightFill: colours[0],
-                        fill: false
-                    },
-                    {
-                        label: "E",
-                        data: key["exposed"],
-                        borderColor: colours[1],
-                        pointHighlightFill: colours[1],
-                        fill: false
-                    },
-                    {
-                        label: "I",
-                        data: key["infected"],
-                        borderColor: colours[2],
-                        pointHighlightFill: colours[2],
-                        fill: false
-                    },
-                    {
-                        label: "R",
-                        data: key["recovered"],
-                        borderColor: colours[3],
-                        pointHighlightFill: colours[3],
-                        fill: false
-                    },
-                    {
-                        label: "D",
-                        data: key["deaths"],                        
-                        borderColor: colours[4],
-                        pointHighlightFill: colours[4],
-                        fill: false
-                    },
-                    
+                    { label: "S", data: key["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], fill: false },
+                    { label: "E", data: key["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], fill: false },
+                    { label: "I", data: key["infected"], borderColor: colours[2], pointHighlightFill: colours[2], fill: false },
+                    { label: "R", data: key["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], fill: false },
+                    { label: "D", data: key["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], fill: false },
                 ],
             },
             options: {
@@ -98,14 +73,8 @@ function sideCells(content){
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }],
-                    xAxes: [{
-                        position: 'bottom'
-                    }]
+                    yAxes: [{ ticks: { display: false, beginAtZero: true }}],
+                    xAxes: [{ position: 'bottom' }]
                 },
                 onClick: function(event, array) {
                     mainCell(i);
