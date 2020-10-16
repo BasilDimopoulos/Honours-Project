@@ -3,15 +3,18 @@ var cellcont = [];
 var cellCharts = [];
 var mainLineChart;
 var colours = [ "#FFCD40", "#4abdff", "#39E039", "#ce77e6", "#FF4040" ];
+var lastMain = 0;
 
 // Draw main cells
 function mainCell(num){
+    if(num == undefined) num = lastMain;
+    lastMain = num;
+
     var mainchart = document.getElementById("maincanvas").getContext("2d");
     if(mainLineChart != undefined) mainLineChart.destroy();
-    $("#maincanvas").empty()
-    console.log()
+    $("#maincanvas").empty();
     mainLineChart = new Chart(mainchart, {
-        type: "doughnut",
+        type: $("#fchartType").val(),
         data:{
             labels: ["Susceptible", "Exposed", "Infected", "Recovered", "Deaths"],
             datasets:[{
@@ -29,7 +32,8 @@ function mainCell(num){
         options:{
             responsive:true,
             maintainAspectRatio: false,
-            title: { display: true, text: cellcont[num]["name"] }
+            title: { display: true, text: cellcont[num]["name"] },
+            legend: { display: ($("#fchartType").val() != "bar" && $("#fchartType").val() != "radar") }
         }
     });
 }
@@ -60,11 +64,11 @@ function sideCells(content){
             data:{
                 labels: times,
                 datasets:[
-                    { label: "S", data: key["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], fill: false },
-                    { label: "E", data: key["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], fill: false },
-                    { label: "I", data: key["infected"], borderColor: colours[2], pointHighlightFill: colours[2], fill: false },
-                    { label: "R", data: key["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], fill: false },
-                    { label: "D", data: key["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], fill: false },
+                    { label: "Susceptibles", data: key["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], fill: false },
+                    { label: "Exposed", data: key["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], fill: false },
+                    { label: "Infected", data: key["infected"], borderColor: colours[2], pointHighlightFill: colours[2], fill: false },
+                    { label: "Recovered", data: key["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], fill: false },
+                    { label: "Deaths", data: key["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], fill: false },
                 ],
             },
             options: {
