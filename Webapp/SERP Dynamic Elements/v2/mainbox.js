@@ -44,8 +44,6 @@ function sideCells(content){
     $("#cells-stack").empty();
     cellCharts = [];
 
-    drawLegend();
-
     $.each(content, function(i, key){
         $("#cells-stack").append("<canvas id='sidecell-" + i + "' width=" + $("#cells-stack-table").width() + "px height=200px ></canvas>");
         if(i != (content.length - 1)) $("#cells-stack").append("<hr />");
@@ -116,20 +114,6 @@ function sideCells(content){
         });
         cellCharts.push(newchart);
     });
-}
-
-// Draw legend for cell stack
-function drawLegend(){
-    var output = "";
-    output += "<div class='row p-3'>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[0] + " '><b>S</b></div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[1] + " '><b>E</b></div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[2] + " '><b>I</b></div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[3] + " '><b>R</b></div>";
-    output += "<div class='col-sm rounded m-1 mb-0' style='text-align: center; background-color: " + colours[4] + " '><b>D</b></div>";
-    output += "</div>";
-    output += "<hr />"
-    $("#cells-stack").append(output);
 }
 
 // make get request for json content

@@ -28,6 +28,25 @@
             "infected":[15, 16, 17],
             "recovered":[18, 16, 17],
             "deaths":[10, 12, 10]
-        }],
+        },
+        {
+            "name":"QLD",
+            "population":[80, 80, 80],
+            "susceptibles":[25, 20, 26],
+            "exposed":[12, 16, 20],
+            "infected":[15, 16, 17],
+            "recovered":[18, 16, 17],
+            "deaths":[10, 12, 10]
+        },
+        {
+            "name":"WA",
+            "population":[80, 80, 80],
+            "susceptibles":[25, 20, 26],
+            "exposed":[12, 16, 20],
+            "infected":[15, 16, 17],
+            "recovered":[18, 16, 17],
+            "deaths":[10, 12, 30]
+        }
+    ],
     "status":"Successfully returned all cells"
 }
