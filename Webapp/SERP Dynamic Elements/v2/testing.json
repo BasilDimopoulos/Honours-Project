@@ -36,7 +36,7 @@
             "exposed":[12, 16, 20],
             "infected":[15, 16, 17],
             "recovered":[18, 16, 17],
-            "deaths":[10, 12, 10]
+            "deaths":[10, 12, 200]
         },
         {
             "name":"WA",
@@ -47,6 +47,7 @@
             "recovered":[18, 16, 17],
             "deaths":[10, 12, 30]
         }
+       
     ],
     "status":"Successfully returned all cells"
 }
