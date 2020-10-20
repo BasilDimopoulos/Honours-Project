@@ -142,7 +142,7 @@ function updateHidden(){
         key.getDatasetMeta(1).hidden=seird_hidden[1]; 
         key.getDatasetMeta(2).hidden=seird_hidden[2]; 
         key.getDatasetMeta(3).hidden=seird_hidden[3]; 
-        key.getDatasetMeta(4).hidden=seird_hidden[4];         
+        key.getDatasetMeta(4).hidden=seird_hidden[4]; 
         key.update();
     });
 }
