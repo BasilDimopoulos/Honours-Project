@@ -136,36 +136,57 @@ $( window ).resize(function(){
     getCells();
 });
 
+function updateHidden(){
+    $.each(cellCharts, function(i, key){
+        key.getDatasetMeta(0).hidden=seird_hidden[0]; 
+        key.getDatasetMeta(1).hidden=seird_hidden[1]; 
+        key.getDatasetMeta(2).hidden=seird_hidden[2]; 
+        key.getDatasetMeta(3).hidden=seird_hidden[3]; 
+        key.getDatasetMeta(4).hidden=seird_hidden[4];         
+        key.update();
+    });
+}
+
 // SEIRD Greyscale disable for collumn chart
 $(document).ready(function(){
     $("#label_S").click(function(){
         seird_hidden[0] = !seird_hidden[0];
         if(!seird_hidden[0]){ $("#label_S").css("background-color", colours[0]); } else { $("#label_S").css("background-color", "#909190"); }
-        getCells();
+        updateHidden();
     });
 
     $("#label_E").click(function(){
         seird_hidden[1] = !seird_hidden[1];
         if(!seird_hidden[1]){ $("#label_E").css("background-color", colours[1]); } else { $("#label_E").css("background-color", "#909190"); }
-        getCells();
+        updateHidden();
     });
 
     $("#label_I").click(function(){
         seird_hidden[2] = !seird_hidden[2];
         if(!seird_hidden[2]){ $("#label_I").css("background-color", colours[2]); } else { $("#label_I").css("background-color", "#909190"); }
-        getCells();
+        updateHidden();
     });
 
     $("#label_R").click(function(){
         seird_hidden[3] = !seird_hidden[3];
         if(!seird_hidden[3]){ $("#label_R").css("background-color", colours[3]); } else { $("#label_R").css("background-color", "#909190"); }
-        getCells();
+        updateHidden();
     });
 
     $("#label_D").click(function(){
         seird_hidden[4] = !seird_hidden[4];
         if(!seird_hidden[4]){ $("#label_D").css("background-color", colours[4]); } else { $("#label_D").css("background-color", "#909190"); }
-        getCells();
+        updateHidden();
+    });
+
+    $("#label_reset").click(function(){
+        seird_hidden = [false, false, false, false, false];
+        $("#label_S").css("background-color", colours[0]);
+        $("#label_E").css("background-color", colours[1]);
+        $("#label_I").css("background-color", colours[2]);
+        $("#label_R").css("background-color", colours[3]);
+        $("#label_D").css("background-color", colours[4]);
+        updateHidden();
     });
 
 });
