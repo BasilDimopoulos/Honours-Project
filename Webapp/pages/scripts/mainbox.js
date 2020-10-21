@@ -14,7 +14,8 @@ function mainCell(num){
    
     if(mainLineChart != undefined) mainLineChart.destroy();
     
-    
+    updateDisplayValues(num);
+
     // Get array of time stamps for cells
     var times = [];
     for(var i = 0; i < cellcont[0]["susceptibles"].length; i++) times.push(i);
@@ -163,7 +164,7 @@ function getCells(referrer){
                 cellcont = data['cells'];
                 sideCells();
                 mainCell(0);
-            }
+            } 
         }
     });
 }
@@ -177,6 +178,15 @@ $(document).ready(function(){
 $( window ).resize(function(){
     getCells();
 });
+
+function updateDisplayValues(cell){
+    $("#display_time").text(cellcont[0]["susceptibles"].length - 1);
+    $("#display_S").text(cellcont[cell]["susceptibles"].slice(-1)[0].toFixed(4));
+    $("#display_E").text(cellcont[cell]["exposed"].slice(-1)[0].toFixed(4));
+    $("#display_I").text(cellcont[cell]["infected"].slice(-1)[0].toFixed(4));
+    $("#display_R").text(cellcont[cell]["recovered"].slice(-1)[0].toFixed(4));
+    $("#display_D").text(cellcont[cell]["deaths"].slice(-1)[0].toFixed(4));
+}
 
 function updateHidden(){
     $.each(cellCharts, function(i, key){
