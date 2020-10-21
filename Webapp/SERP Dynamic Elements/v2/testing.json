@@ -5,47 +5,47 @@
         {
             "name":"SA",
             "population":[ 50, 50, 50],
-            "susceptibles": [ 32, 35, 37],
-            "exposed":[ 12, 15, 17],
-            "infected":[3,5, 6],
-            "recovered":[2,2,4],
-            "deaths":[1,2,2]
+            "susceptibles": [ 32, 35, 3700],
+            "exposed":[ 12, 15, 17000],
+            "infected":[3,5, 6000],
+            "recovered":[2,2,4000],
+            "deaths":[1,2,2000]
         },
         {
             "name":"VIC",
-            "population": [70, 70, 70],
-            "susceptibles":[3, 10, 23],
-            "exposed":[5, 7, 15],
-            "infected":[30, 40, 50],
-            "recovered":[12, 5, 4],
-            "deaths": [20, 18, 16]
+            "population": [70, 70, 7000],
+            "susceptibles":[3, 10, 2300],
+            "exposed":[5, 7, 1500],
+            "infected":[30, 40, 5000],
+            "recovered":[12, 5, 400],
+            "deaths": [20, 18, 1600]
         },
         {
             "name":"NSW",
-            "population":[80, 80, 80],
-            "susceptibles":[25, 20, 26],
-            "exposed":[12, 16, 20],
-            "infected":[15, 16, 17],
-            "recovered":[18, 16, 17],
-            "deaths":[10, 12, 10]
+            "population":[80, 80, 8000],
+            "susceptibles":[25, 20, 2600],
+            "exposed":[12, 16, 2000],
+            "infected":[15, 16, 1700],
+            "recovered":[18, 16, 1700],
+            "deaths":[10, 12, 1000]
         },
         {
             "name":"QLD",
-            "population":[80, 80, 80],
-            "susceptibles":[25, 20, 26],
-            "exposed":[12, 16, 20],
-            "infected":[15, 16, 17],
-            "recovered":[18, 16, 17],
-            "deaths":[10, 12, 200]
+            "population":[80, 80, 8000],
+            "susceptibles":[25, 20, 2600],
+            "exposed":[12, 16, 2000],
+            "infected":[15, 16, 1700],
+            "recovered":[18, 16, 1700],
+            "deaths":[10, 12, 20000]
         },
         {
             "name":"WA",
-            "population":[80, 80, 80],
-            "susceptibles":[25, 20, 26],
-            "exposed":[12, 16, 20],
-            "infected":[15, 16, 17],
-            "recovered":[18, 16, 17],
-            "deaths":[10, 12, 30]
+            "population":[80, 80, 8000],
+            "susceptibles":[25, 20, 2600],
+            "exposed":[12, 16, 2000],
+            "infected":[15, 16, 1700],
+            "recovered":[18, 16, 1700],
+            "deaths":[10, 12, 3000]
         }
        
     ],

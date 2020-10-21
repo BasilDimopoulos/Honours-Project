@@ -10,10 +10,15 @@ var seird_hidden = [false, false, false, false, false];
 function mainCell(num){
     if(num == undefined) num = lastMain;
     lastMain = num;
-
-    var mainchart = document.getElementById("maincanvas").getContext("2d");
+   
     if(mainLineChart != undefined) mainLineChart.destroy();
-    $("#maincanvas").empty();
+    
+
+    // maincanvas-div
+    $("#maincanvas-div").empty();
+    $("#maincanvas-div").append("<canvas id='maincell' class='p-0 m-0' width=" + $("#maincanvas-div-table").width() + "px  style='height: 60vh;' ></canvas>");
+    var mainchart = document.getElementById("maincell").getContext("2d");
+
     if($("#fchartType").val() != "line"){
         mainLineChart = new Chart(mainchart, {
             type: $("#fchartType").val(),
@@ -35,7 +40,8 @@ function mainCell(num){
                 responsive:true,
                 maintainAspectRatio: false,
                 title: { display: true, text: cellcont[num]["name"] },
-                legend: { display: ($("#fchartType").val() != "bar" && $("#fchartType").val() != "radar") },
+                legend: { display: ($("#fchartType").val() != "bar" && $("#fchartType").val() != "radar") && ($("#fchartType").val() != "horizontalBar")},
+                
             }
         });
     } else {
@@ -53,23 +59,35 @@ function mainCell(num){
             },
             options: {
                 title: { display: true, text: cellcont[num]["name"] },
-                legend: { display: true },
+                legend: { display: true, beginAtZero: true },
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 scales: {
-                    yAxes: [{ ticks: { display: true, beginAtZero: true }}],
+                    yAxes: [{ ticks: { display: true, beginAtZero: true,
+                        callback: function(label, index, labels) {
+                            return numberlabel(label, 1);
+                        }
+                    }}],
                     xAxes: [{ position: 'bottom' }]
-                }
+                },
             }
         });
     }
+}
+
+// Label Ticks Y Axis
+function numberlabel(label, fixed){
+    if(Number(label) >= 1e3 && Number(label) < 1e6){ return (label/1e3).toFixed(fixed) + ' K'; }
+    if(Number(label) >= 1e6 && Number(label) < 1e9){ return (label/1e6).toFixed(fixed) + ' M'; }
+    if(Number(label) >= 1e9){ return (label/1e9).toFixed(fixed) + ' B'; }
+    return label
 }
 
 // Draw sidebar cells
 function sideCells(content){    
     // Get array of time stamps for cells
     times = [];
-    for(var i = 0; i < content[0]["population"].length; i++) times.push(i);
+    for(var i = 0; i < content[0]["susceptibles"].length; i++) times.push(i);
     
     // Empty existing cell stack
     $("#cells-stack").empty();
@@ -91,11 +109,11 @@ function sideCells(content){
             data:{
                 labels: times,
                 datasets:[
-                    { label: "Susceptibles", data: key["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], fill: false, hidden: seird_hidden[0] },
-                    { label: "Exposed", data: key["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], fill: false, hidden: seird_hidden[1] },
-                    { label: "Infected", data: key["infected"], borderColor: colours[2], pointHighlightFill: colours[2], fill: false, hidden: seird_hidden[2] },
-                    { label: "Recovered", data: key["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], fill: false, hidden: seird_hidden[3] },
-                    { label: "Deaths", data: key["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], fill: false, hidden: seird_hidden[4] },
+                    { label: "Susceptibles", data: key["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], pointcolor: colours[0], fill: false, hidden: seird_hidden[0] },
+                    { label: "Exposed", data: key["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], pointcolor: colours[1], fill: false, hidden: seird_hidden[1] },
+                    { label: "Infected", data: key["infected"], borderColor: colours[2], pointHighlightFill: colours[2], pointcolor: colours[2], fill: false, hidden: seird_hidden[2] },
+                    { label: "Recovered", data: key["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], pointcolor: colours[3], fill: false, hidden: seird_hidden[3] },
+                    { label: "Deaths", data: key["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], pointcolor: colours[4], fill: false, hidden: seird_hidden[4] },
                 ],
             },
             options: {
@@ -104,7 +122,11 @@ function sideCells(content){
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {
-                    yAxes: [{ ticks: { display: false, beginAtZero: true }}],
+                    yAxes: [{ ticks: { display: true, beginAtZero: true, maxTicksLimit: 4,
+                        callback: function(label, index, labels) {
+                            return numberlabel(label, 1);
+                        }
+                    }}],
                     xAxes: [{ position: 'bottom' }]
                 },
                 onClick: function(event, array) {
@@ -190,3 +212,18 @@ $(document).ready(function(){
     });
 
 });
+
+
+// function testrun(){
+//     $.each(cellCharts, function(i, key){
+//         key.data.labels = [1,2,3,4];
+//         key.data.datasets = [
+//             { label: "Susceptibles", data: cellcont[i]["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], fill: false, hidden: seird_hidden[0] },
+//             { label: "Exposed", data: cellcont[i]["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], fill: false, hidden: seird_hidden[1] },
+//             { label: "Infected", data: cellcont[i]["infected"], borderColor: colours[2], pointHighlightFill: colours[2], fill: false, hidden: seird_hidden[2] },
+//             { label: "Recovered", data: cellcont[i]["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], fill: false, hidden: seird_hidden[3] },
+//             { label: "Deaths", data: cellcont[i]["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], fill: false, hidden: seird_hidden[4] },
+//         ]
+//         key.update();
+//     });
+// }
