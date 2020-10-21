@@ -5,6 +5,7 @@ var mainLineChart;
 var colours = [ "#FFCD40", "#4abdff", "#39E039", "#ce77e6", "#FF4040" ];
 var lastMain = 0;
 var seird_hidden = [false, false, false, false, false];
+var latestServer = Date.now();
 
 // Draw main cells
 function mainCell(num){
@@ -84,10 +85,10 @@ function numberlabel(label, fixed){
 }
 
 // Draw sidebar cells
-function sideCells(content){    
+function sideCells(){    
     // Get array of time stamps for cells
     times = [];
-    for(var i = 0; i < content[0]["susceptibles"].length; i++) times.push(i);
+    for(var i = 0; i < cellcont[0]["susceptibles"].length; i++) times.push(i);
     
     // Empty existing cell stack
     $("#cells-stack").empty();
@@ -97,9 +98,9 @@ function sideCells(content){
     cellCharts = [];
 
     // Go through JSON input and create Charts
-    $.each(content, function(i, key){
+    $.each(cellcont, function(i, key){
         $("#cells-stack").append("<canvas id='sidecell-" + i + "' width=" + $("#cells-stack-table").width() + "px height=200px ></canvas>");
-        if(i != (content.length - 1)) $("#cells-stack").append("<hr />");
+        if(i != (cellcont.length - 1)) $("#cells-stack").append("<hr />");
         var current = document.getElementById("sidecell-" + i).getContext("2d");
         isfirst = (i == 0);
         
@@ -139,20 +140,29 @@ function sideCells(content){
 }
 
 // make get request for json content
-function getCells(){
+function getCells(referrer){
     $.getJSON("/testing.json", function(data){
-        if(data["status"] == "Successfully returned all cells"){
-            cellcont = data['cells'];
-            sideCells(data['cells']);
-            mainCell(0);   
+        if(data["status"] == "Successfully returned all cells"){         
+            if(referrer == "interval"){
+                if (JSON.stringify(cellcont) != JSON.stringify(data['cells'])){
+                    cellcont = data['cells'];
+                    sideCells();
+                    mainCell();
+                }
+            }  else {                
+                cellcont = data['cells'];
+                sideCells();
+                mainCell(0);
+            }
         }
     });
 }
 
-
 // Main Javascript calls
 $(document).ready(function(){
-    getCells();
+    getCells();     
+
+    window.setInterval(function(){ getCells("interval"); }, 5000);
 });
 $( window ).resize(function(){
     getCells();
