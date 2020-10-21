@@ -123,7 +123,7 @@ class Cell:
         return equationParams
 
     def updateOutputs(self, step):
-        print("Updating outputs for: " + self.name)
+        # print("Updating outputs for: " + self.name)
         tspan = np.arange(0, step, 1)
         initial_conditions = self.getInitCond()
         params = self.getEquationParams()
@@ -201,7 +201,8 @@ def initApp(data):
 
         tempIt = tempIt + 1
 
-        
+    app.initAt = datetime.now()
+
     print("Created %d cells" % app.cellCount)
     print("Time step: %d" % app.timeStep)
     print("Duration: %d" % app.duration)
@@ -266,16 +267,14 @@ def getAllCells(data):
 def getAppInfo(data):
     response = {}
 
-    response['Application Info'] = []
-
     appInfo = {}
     appInfo['cellCount'] = app.cellCount
-    appInfo['initAt'] = app.initAt
+    appInfo['initAt'] = str(app.initAt)
     appInfo['timeStep'] = app.timeStep
     appInfo['duration'] = app.duration
     appInfo['time'] = app.time
 
-    response['Application Info'].append(appInfo)
+    response['Application Info'] = appInfo
     response['status'] = "Successfully returned application information"
 
     return response
@@ -284,17 +283,25 @@ def getAppInfo(data):
 def reset(data):
     response = {}
     # reset member variables an application parameters
+    app.cellCount = 0
     app.timeStep = 0
     app.duration = 0
     app.time = 0
     app.initAt = 0
 
+    appInfo = {}
+    appInfo['cellCount'] = app.cellCount
+    appInfo['timeStep'] = app.timeStep
+    appInfo['duration'] = app.duration
+    appInfo['time'] = app.time
+    response['Application Info'] = appInfo
+
     # clear the cells
     del app.cells[:]
     if len(app.cells) == 0:
-        app.cellCount = 0
         response['status'] = "Successfully reset application state"
     else:
+        app.cellCount = len(app.cells)
         response['status'] = "Error clearning cells, application was not sucessfully reset"
 
     return response

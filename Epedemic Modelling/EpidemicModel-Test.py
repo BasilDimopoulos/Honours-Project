@@ -62,6 +62,57 @@ class TESTING(unittest.TestCase):
         correctOutput = {'time': 0, 'cells': [{'name': 'SA', 'population': 50.0, 'susceptibles': [32.0], 'exposed': [12.0], 'infected': [3.0], 'recovered': [2.0], 'deaths': [1.0]}, {'name': 'VIC', 'population': 70.0, 'susceptibles': [3.0], 'exposed': [5.0], 'infected': [30.0], 'recovered': [12.0], 'deaths': [20.0]}, {'name': 'NSW', 'population': 80.0, 'susceptibles': [25.0], 'exposed': [12.0], 'infected': [15.0], 'recovered': [18.0], 'deaths': [10.0]}], 'status': 'Successfully returned all cells'}
         self.assertEqual(EM.getAllCells(data), correctOutput)
 
+    # Test 7 - Test getAppInfo response is correct
+    def test_EM007(self):
+        EM.app.timeStep = 3
+        EM.app.duration = 35
+        EM.app.time = 0
+        EM.app.cellCount = 0
+
+        data = {}
+        data['control'] = "getAppInfo"
+        temp = {}
+        temp['cellCount'] = 0
+        temp['timeStep'] = 3
+        temp['duration'] = 35
+        temp['time'] = 0
+        correctOutput = {}
+        correctOutput['Application Info'] = temp
+        correctOutput['status'] = "Successfully returned application information"
+
+        response = {}
+        response = EM.getAppInfo(data)
+
+        if 'initAt' in response['Application Info']:
+            del response['Application Info']['initAt']
+        self.assertEqual(response, correctOutput)
+
+    # Test 8 - Test Application reset function
+    def test_EM008(self):
+        response = {}
+        EM.app.timeStep = 5
+        EM.app.duration = 35
+        EM.app.time = 5
+        EM.app.cellCount = 3
+        EM.app.cells.append(EM.Cell("SA"))
+        EM.app.cells.append(EM.Cell("VIC"))
+        EM.app.cells.append(EM.Cell("NSW"))
+
+        correctOutput = {}
+        temp = {}
+        temp['cellCount'] = 0
+        temp['timeStep'] = 0
+        temp['duration'] = 0
+        temp['time'] = 0
+        correctOutput['Application Info'] = temp
+        correctOutput['status'] = "Successfully reset application state"
+
+        data = {}
+        data['control'] = "reset"
+
+        response = EM.reset(data)
+        self.assertEqual(response, correctOutput)
+
 # Start Unit Tests
 print("Epidemic Model Test Suite:     (Add -v for verbose output)")
 print("----------------------------------------------------------------------")
