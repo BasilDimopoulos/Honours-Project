@@ -54,5 +54,18 @@
 // -----------
 
 {
+    "control": "nextStep",
+    "timestep": 5
+}
+
+// -----------
+
+{
     "control": "getAllCells"
+}
+
+// -----------
+
+{
+    "control": "reset"
 }

@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Load Data</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function getData(){
+            $.getJSON("/model.json", function(data){
+                $(".time").text(data["time"]);
+                $(".status").text(data["status"]);
+                $(".cells").text("");
+                var items = [];
+                $.each(data["cells"], function(id, val){
+                    $(".cells").prepend("<tr><td><p><b>" + val["name"] + " </b>" + val["exposed"] +  "</tr></td></p>");
+                });
+
+                console.log(data["cells"]);
+            });
+        }
+        getData();
+    </script>
+</head>
+<body>
+    <h3 class="time"></h3>
+    <h4 class="status"></h4>
+    <p class="cells"></p>
+
+</body>
+</html>
