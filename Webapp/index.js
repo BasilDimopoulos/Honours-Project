@@ -15,6 +15,7 @@ const { v4: uuidv4 } = require("uuid");
 const { send } = require('process');
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 app.use('/graphs', express.static("graphs"));
 app.use('/popsim', express.static("pages/popsim2.html"));
 app.use(session({
@@ -36,6 +37,8 @@ function stopModel(){ modelProcess.kill(); }
 //////////////////////////////
 //      SERVER ROUTES       //
 //////////////////////////////
+
+var serverInit = false;
 
 // Run pop simulation (S1 Program)
 app.post("/popsim", function(req, res){   
@@ -95,10 +98,49 @@ app.get('/load', function(req, res){
 });
 
 app.get("/instructor", function(req, res){
-    res.sendFile(path.join(__dirname + "/pages/instructor.html"));
+    if(serverInit){
+        res.sendFile(path.join(__dirname + "/pages/instructor.html"));
+    } else {
+        res.sendFile(path.join(__dirname + "/pages/setup.html"));
+    }
 });
 
+app.post("/init", function(req, res){
+
+    var setup = new Object();
+    setup.control = "initApp";
+    setup.timestep = parseInt(req.body.sim.timeStep);
+    setup.duration = parseInt(req.body.sim.simulationDays);
+    setup.cells = [];
+
+    for(var i = 0; i < req.body.cells.length; i++){
+        var currentCell = new Object();
+
+        currentCell.name = req.body.cells[i].cellName;
+        currentCell.population = parseInt(req.body.cells[i].population);
+        currentCell.exposed = parseInt(req.body.cells[i].initalE);
+        currentCell.infected = parseInt(req.body.cells[i].initalI);
+        currentCell.recovered = parseInt(req.body.cells[i].initalR);
+        currentCell.deaths = parseInt(req.body.cells[i].initalD);
+        currentCell.beta = parseFloat(req.body.cells[i].infectionRate);
+        currentCell.sigma = parseFloat(req.body.cells[i].incubationRate);
+        currentCell.gamma = parseFloat(req.body.cells[i].recoveryRate);
+        currentCell.mu = parseFloat(req.body.cells[i].deathRate);
+        currentCell.x = parseFloat(req.body.cells[i].returnToSusceptibility);
+        
+        setup.cells.push(currentCell);
+    }
+    
+    sendCommand({control: "reset"});
+    sendCommand(setup);
+    serverInit = true;
+    res.redirect("/instructor");
+});
+
+
 app.use("/scripts", express.static("pages/scripts"));
+app.use("/stylesheets", express.static("pages/stylesheets"));
+app.use("/images", express.static("pages/images"));
 
 app.get("/student", function(req, res){
     res.send("Student View Goes Here");

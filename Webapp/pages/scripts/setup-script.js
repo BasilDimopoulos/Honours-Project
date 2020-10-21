@@ -1,3 +1,5 @@
+// const { json } = require("express");
+
 const slidePage = document.querySelector(".slide-page");
 const nextBtnFirst = document.querySelector(".firstNext");
 const prevBtnSec = document.querySelector(".prev-1");
@@ -79,12 +81,21 @@ nextBtnThird.addEventListener("click", function(event){
 });
 
 submitBtn.addEventListener("click", function(){
-  //CODE HERE JOSH
   getPageOneData();
   getPageTwoData();
   getPageThreeData();
-  var jsonString = JSON.stringify({simulation: simulation, cells: cells, policies: policies});
-  console.log(jsonString);
+
+  var out = new Object();
+  out.sim = simulation;
+  out.cells = cells;
+  out.policies = policies;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", "/init");
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.send(JSON.stringify(out));
+
+  location.href = "/instructor";
 });
 
 prevBtnSec.addEventListener("click", function(event){
