@@ -179,7 +179,7 @@ def ode_solver(t, initial_conditions, params):
 def initApp(data):
     response = {}
     # set the timestep and duration of the simulation
-    app.timeStep = data['timestep']
+    app.timeStep = data['timestep'] + 1
     app.duration = data['duration']
     # Set the number of cells, create their objects and set their variables
     app.cellCount = len(data['cells'])

@@ -22,7 +22,7 @@ function mainCell(num){
 
     // maincanvas-div
     $("#maincanvas-div").empty();
-    $("#maincanvas-div").append("<canvas id='maincell' class='p-0 m-0' width=" + $("#maincanvas-div-table").width() + "px  style='height: 60vh;' ></canvas>");
+    $("#maincanvas-div").append("<canvas id='maincell' class='p-0 m-0' width=" + $("#maincanvas-div-table").width() + "px  style='height: 55vh;' ></canvas>");
     var mainchart = document.getElementById("maincell").getContext("2d");
 
     if(cellcont[num]["susceptibles"] != undefined){
@@ -181,6 +181,7 @@ $( window ).resize(function(){
 
 function updateDisplayValues(cell){
     $("#display_time").text(cellcont[0]["susceptibles"].length - 1);
+    $("#display_P").text(cellcont[cell]["population"]);
     $("#display_S").text(cellcont[cell]["susceptibles"].slice(-1)[0].toFixed(4));
     $("#display_E").text(cellcont[cell]["exposed"].slice(-1)[0].toFixed(4));
     $("#display_I").text(cellcont[cell]["infected"].slice(-1)[0].toFixed(4));

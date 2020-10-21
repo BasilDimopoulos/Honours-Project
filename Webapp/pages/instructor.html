@@ -46,14 +46,14 @@
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>
                                 <label for="fduration">Control 1:</label>
-                                <input type="text" class="form-control form-inline" id="fduration" name="duration">
+                                <input disabled="disabled" type="text" class="form-control form-inline" id="fduration" name="duration">
                             </div>
                         </li>
 
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>
                                 <label for="fpopulation">Control 2:</label>
-                                <input type="text" class="form-control" id="fpopulation" name="population">
+                                <input disabled="disabled" type="text" class="form-control" id="fpopulation" name="population">
                             </div>
                         </li>
 
@@ -95,8 +95,10 @@
                                   </select>
                             </div>
                             <div>
-                                <h4 class="mb-0"><strong>Current Time: </strong><a id="display_time"></a></h4><br />
-                                <p class="mt-0"><strong>Susceptibles: </strong><a id="display_S"></a><br />
+                                <h4 class="mb-0"><strong>Time: </strong><a id="display_time"></a> Days</h4><br />
+                                <p class="mt-0">
+                                <strong>Population: </strong><a id="display_P"></a><br />
+                                <strong>Susceptibles: </strong><a id="display_S"></a><br />
                                 <strong>Exposed: </strong><a id="display_E"></a><br />
                                 <strong>Infected: </strong><a id="display_I"></a><br />
                                 <strong>Recovered: </strong><a id="display_R"></a><br />
