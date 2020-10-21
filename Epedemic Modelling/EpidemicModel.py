@@ -324,12 +324,12 @@ def main():
     # c3.setTimeStep(2)
 
     app.cells[0].print()
-    # app.cells[1].print()
-    # app.cells[2].print()
+    app.cells[1].print()
+    app.cells[2].print()
 
  
 
-    print("Calculate step...\n")
+    # print("Calculate step...\n")
     # app.cells[0].updateOutputs()
     # app.cells[0].print()
     # app.cells[0].updateOutputs()
@@ -348,7 +348,7 @@ def main():
 
     # nextStep(data)
     # nextStep(data)
-    # print(json.dumps(getAllCells(data)))
+    print(json.dumps(getAllCells(data)))
 
     data['control'] = "reset"
     # print(json.dumps(reset(data)))
