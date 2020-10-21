@@ -14,6 +14,10 @@ function mainCell(num){
    
     if(mainLineChart != undefined) mainLineChart.destroy();
     
+    
+    // Get array of time stamps for cells
+    var times = [];
+    for(var i = 0; i < cellcont[0]["susceptibles"].length; i++) times.push(i);
 
     // maincanvas-div
     $("#maincanvas-div").empty();
