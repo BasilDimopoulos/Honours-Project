@@ -237,6 +237,12 @@ $(document).ready(function(){
         });
     });
 
+    $("#nextStepn").click(function(){
+        $.get("/nextStep/" + $("#nextStepn-value").val()).done(function(){
+            getCells("interval");
+        });
+    });
+
 });
 
 
