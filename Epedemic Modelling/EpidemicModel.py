@@ -5,6 +5,32 @@ import os
 from scipy.integrate import odeint
 import sys
 import time
+from datetime import datetime
+import json.decoder
+
+
+class Application:
+    # --- Instance Members ---
+    cellCount = 0
+    initAt = datetime.today()
+    # list of all cells
+    
+    # number of days to calulate epidemic functions over, default 2 (= 1 day)
+    timeStep = 2
+    # number of days the simulation will run for
+    duration = 30
+    # the current time of the simulation
+    time = 0
+
+    # --- End Instance Members ---
+
+    def __init__(self):
+        self.initAt = datetime.now()
+        self.cells = []
+
+        
+
+app = Application()
 
 class Cell:
     # --- Static members ---
@@ -36,17 +62,12 @@ class Cell:
     # Return to susceptibility rate
     x = 0
 
-    # outputs
-    S = float(0)
-    E = float(0)
-    I = float(0)
-    R = float(0)
-    D = float(0)
-    N = 0
+    # outputs   
+
     sol = []
 
     # number of days to calulate epidemic functions over, default 1.
-    timeStep = 1
+    # timeStep = 1
 
     # --- End Instance Members ---
 
@@ -54,66 +75,83 @@ class Cell:
     def __init__(self, name):
         self.id = Cell.newId()
         self.name = name
-    
+        self.S = []
+        self.E = []
+        self.I = []
+        self.R = []
+        self.D = []
+        self.N = []
 
     def print(self):
         print("id: " + str(self.id) + "\t" + self.name + "\t")
         print("Initial Conditions: " + str(self.getInitCond()))
         print("Equation Parameters: " + str(self.getEquationParams()))
         print("Outputs: " + str(self.getOutputs()))
-        print("Pop: " + str(self.initN))
+        print("Pop: " + str(self.N))
         print()
 
     def setInitCond(self, initConditions):
         if len(initConditions) != 5:
             sys.exit("Invalid list of input conditions")
 
-        self.initE, self.initI, self.initR, self.initD, self.initN  = initConditions
-        self.initS = self.initN - (self.initE + self.initI + self.initR + self.initD)
+        self.E.append(float(initConditions[0]))
+        self.I.append(float(initConditions[1]))
+        self.R.append(float(initConditions[2]))
+        self.D.append(float(initConditions[3]))
+        self.N.append(float(initConditions[4]))
+        self.S.append(float(initConditions[4]) - (float(initConditions[0]) + float(initConditions[1]) + float(initConditions[2]) + float(initConditions[3])))
 
-
+    # returns the inital conditions in list in order of EIRND
+    # which are taken from the latest SEIRD outputs
     def getInitCond(self):
         initConditions = []
-        initConditions = self.initE, self.initI,self.initR, self.initN, self.initD
+        initConditions = self.E[-1], self.I[-1],self.R[-1], self.N[-1], self.D[-1]
         return initConditions
 
+    # in order of beta, sigma, gamma, mu, x
     def setEquationParams(self, equationParams):
         if len(equationParams) != 5:
             sys.exit("Invalid list of equation parameters")
 
         self.beta, self.sigma, self.gamma, self.mu, self.x = equationParams
 
+    # return a list of the equatin params in order of
+    # beta, sigma, gamma, mu, x
     def getEquationParams(self):
         equationParams = []
         equationParams = self.beta, self.sigma, self.gamma, self.mu, self.x
         return equationParams
 
-    def setTimeStep(self, step):
-        self.timeStep = step
-
-    def getTimeStep(self):
-        return self.timeStep
-
-    def updateOutputs(self):
-        tspan = np.arange(0, self.timeStep, 1)
+    def updateOutputs(self, step):
+        print("Updating outputs for: " + self.name)
+        tspan = np.arange(0, step, 1)
         initial_conditions = self.getInitCond()
         params = self.getEquationParams()
         self.sol = ode_solver(tspan, initial_conditions, params)
         S, E, I, R, D = self.sol[:, 0], self.sol[:, 1], self.sol[:, 2], self.sol[:, 3], self.sol[:, 4]
-        self.S = S[-1]
-        self.E = E[-1]
-        self.I = I[-1]
-        self.R = R[-1]
-        self.D = D[-1]
-        self.setInitCond([self.E, self.I, self.R, self.D, self.initN])
+        self.S.extend(S[1:].tolist())
+        self.E.extend(E[1:].tolist())
+        self.I.extend(I[1:].tolist())
+        self.R.extend(R[1:].tolist())
+        self.D.extend(D[1:].tolist())
 
     def getOutputs(self):
         outputs = self.S, self.E, self.I, self.R, self.D
         return outputs
+        
+
+    # outputs param in form EIRND
+    def setOutputs(self, outputs):
+        self.E.append(outputs[0])
+        self.I.append(outputs[1])
+        self.R.append(outputs[2])
+        self.D.append(outputs[4])
+        self.S.append(outputs[3] - (outputs[0] + outputs[1] + outputs[2] + outputs[4]))
 
     def getPopulation(self):
-        if type(self.initN) != type(None):
-            return self.initN
+        if len(self.N) != 0:
+            return self.N[-1]
+
 
 def ode_model(z, t, beta, sigma, gamma, mu, x):
     """
@@ -138,29 +176,185 @@ def ode_solver(t, initial_conditions, params):
     return res
 
 
+def initApp(data):
+    response = {}
+    # set the timestep and duration of the simulation
+    app.timeStep = data['timestep']
+    app.duration = data['duration']
+    # Set the number of cells, create their objects and set their variables
+    app.cellCount = len(data['cells'])
+
+    cellsList = data['cells']
+
+    tempIt = 0
+    for cell in cellsList:
+        app.cells.append(Cell(cell['name']))
+        initConds = [cell['exposed'], cell['infected'], cell['recovered'], cell['deaths'], cell['population']]
+        equationParams = [cell['beta'], cell['sigma'], cell['gamma'], cell['mu'], cell['x']]
+        # set the intial conditions
+        app.cells[tempIt].setInitCond(initConds)
+        # set the outputs to the initial conditions (same for t=0)
+        # app.cells[tempIt].setOutputs(app.cells[tempIt].getInitCond())
+        # set the epidemic equation parameters
+        app.cells[tempIt].setEquationParams(equationParams)
+        app.cells[tempIt].print()
+
+        tempIt = tempIt + 1
+
+        
+    print("Created %d cells" % app.cellCount)
+    print("Time step: %d" % app.timeStep)
+    print("Duration: %d" % app.duration)
+
+    if app.cellCount == len(app.cells):
+        response['status'] = "Successfully initalised application instance"
+    else:
+        response['status'] = "Error occured when creating cell objects"
+        
+    return response
+
+def nextStep(data):
+    response = {}
+    obj_key = 'timestep'
+    if obj_key in data:
+        print("Custom timestep of %d day(s) provided, using this" % int(data['timestep']))
+        customStep = int(data['timestep']) + 1
+        for cell in app.cells:
+            cell.updateOutputs(customStep)
+
+        app.time = app.time + (customStep - 1)
+        response['status'] = "Sucessfully progressed " + str(customStep-1) +  " day(s)"
+
+    else:
+        print("Using default timestep of %d day(s)" % int(app.timeStep-1))
+        for cell in app.cells:
+            cell.updateOutputs(app.timeStep)
+
+        app.time = app.time + (app.timeStep - 1)
+        response['status'] = "Sucessfully progressed to next step"
+
+
+    return response
+
+def getAllCells(data):
+    response = {}
+
+    response['time'] = app.time
+    response['cells'] = []
+    for cell in app.cells:
+        cellData = {}
+        cellData['name'] = cell.name
+        cellData['population'] = cell.getPopulation()
+        # list in format SEIRD
+        epiOutputs = cell.getOutputs()
+        cellData['susceptibles'] = epiOutputs[0]
+        cellData['exposed'] = epiOutputs[1]
+        cellData['infected'] = epiOutputs[2]
+        cellData['recovered'] = epiOutputs[3]
+        cellData['deaths'] = epiOutputs[4]
+
+        response['cells'].append(cellData)
+
+    if (len(response['cells']) == len(app.cells)):   
+        response['status'] = "Successfully returned all cells"
+
+    else:
+        response['status'] = "Error fetching all cell data"
+
+    return response
+
+def getAppInfo(data):
+    response = {}
+
+    response['Application Info'] = []
+
+    appInfo = {}
+    appInfo['cellCount'] = app.cellCount
+    appInfo['initAt'] = app.initAt
+    appInfo['timeStep'] = app.timeStep
+    appInfo['duration'] = app.duration
+    appInfo['time'] = app.time
+
+    response['Application Info'].append(appInfo)
+    response['status'] = "Successfully returned application information"
+
+    return response
+
+        
+def reset(data):
+    response = {}
+    # reset member variables an application parameters
+    app.timeStep = 0
+    app.duration = 0
+    app.time = 0
+    app.initAt = 0
+
+    # clear the cells
+    del app.cells[:]
+    if len(app.cells) == 0:
+        app.cellCount = 0
+        response['status'] = "Successfully reset application state"
+    else:
+        response['status'] = "Error clearning cells, application was not sucessfully reset"
+
+    return response
+
 def main():
     # main execution loop
+    app.timeStep = 5
 
-    # main()
-    c1 = Cell("Adelaide")
-    c2 = Cell("Melbourne")
+    # c1 = Cell("SA")
+    # c2 = Cell("VIC")
+    # c3 = Cell("NSW")
+    app.cells.append(Cell("SA"))
+    app.cells.append(Cell("VIC"))
+    app.cells.append(Cell("NSW"))
 
-    c1.setInitCond([1,27,0,0,500])
-    c1.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
-    c1.setTimeStep(2)
-    c1.print()
+    # E I R D N
+    app.cells[0].setInitCond([12,3,2,1,50])
+    app.cells[0].setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
+    # c1.setTimeStep(2)
 
-    # print("Time step: " + str(c1.timeStep))
-    print("Calculate step...\n")
-    c1.updateOutputs()
-    c1.print()
-    # print(c1.getOutputs())
+    app.cells[1].setInitCond([5,30,12,20,70])
+    app.cells[1].setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
+    # # # c2.setTimeStep(2)
 
-    print("Calculate step...\n")
-    c1.updateOutputs()
-    c1.print()
+    app.cells[2].setInitCond([12,15,18,10,80])
+    app.cells[2].setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
+    # c3.setTimeStep(2)
 
+    app.cells[0].print()
+    app.cells[1].print()
+    app.cells[2].print()
 
+ 
+
+    # print("Calculate step...\n")
+    # app.cells[0].updateOutputs()
+    # app.cells[0].print()
+    # app.cells[0].updateOutputs()
+    # app.cells[1].updateOutputs()
+    # app.cells[2].updateOutputs()
+    # app.cells[0].print()
+    # app.cells[1].print()
+    # app.cells[2].print()
+
+    
+
+    data = {}
+    data['control'] = "getAllCells"
+
+    getAppInfo(data)
+
+    # nextStep(data)
+    # nextStep(data)
+    print(json.dumps(getAllCells(data)))
+
+    data['control'] = "reset"
+    # print(json.dumps(reset(data)))
+
+    data['control'] = "getAllCells"
+    # print(json.dumps(getAllCells(data)))
 
 if __name__ == '__main__':
     main()
