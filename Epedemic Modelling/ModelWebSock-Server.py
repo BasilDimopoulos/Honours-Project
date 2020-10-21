@@ -17,6 +17,8 @@ def processControlMsg(msg, data):
         'initApp': EpidemicModel.initApp,
         'nextStep': EpidemicModel.nextStep,
         'getAllCells': EpidemicModel.getAllCells,
+        'getAppInfo' : EpidemicModel.getAppInfo,
+        'reset' : EpidemicModel.reset,
     }
     # Get the function from the switcher dictionary
     func = switcher.get(msg, lambda: "Invalid control message.")
