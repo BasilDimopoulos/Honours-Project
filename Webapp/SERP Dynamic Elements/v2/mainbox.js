@@ -141,7 +141,7 @@ function sideCells(){
 
 // make get request for json content
 function getCells(referrer){
-    $.getJSON("/testing.json", function(data){
+    $.getJSON("/model.json", function(data){
         if(data["status"] == "Successfully returned all cells"){         
             if(referrer == "interval"){
                 if (JSON.stringify(cellcont) != JSON.stringify(data['cells'])){
@@ -219,6 +219,12 @@ $(document).ready(function(){
         $("#label_R").css("background-color", colours[3]);
         $("#label_D").css("background-color", colours[4]);
         updateHidden();
+    });
+
+    $("#nextStep").click(function(){
+        $.get("/nextStep").done(function(){
+            getCells("interval");
+        });
     });
 
 });
