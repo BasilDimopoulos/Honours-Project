@@ -12,6 +12,7 @@ const path = require("path");
 const https = require("https");
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
+const { send } = require('process');
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/graphs', express.static("graphs"));
@@ -90,8 +91,10 @@ app.get('/load', function(req, res){
 });
 
 app.get("/instructor", function(req, res){
-    res.send("Instructor View Goes Here");
+    res.sendFile(path.join(__dirname + "/pages/instructor.html"));
 });
+
+app.use("/scripts", express.static("pages/scripts"));
 
 app.get("/student", function(req, res){
     res.send("Student View Goes Here");
@@ -118,7 +121,6 @@ function updateCells(){
         wsc.send(JSON.stringify({control: "getAllCells"}));
         wsc.on("message", function(inmsg){
             wsc.close(1000);
-            console.log("Update recieved from model");
             contentstate = [new Date(), JSON.parse(inmsg)]
         });
     });
@@ -136,11 +138,67 @@ function sendCommand(input){
     });
 }
 
-// Next Step
+// Next Step and Next Step X
 app.get("/nextStep", function(req, res){
     sendCommand({control: "nextStep"});
     res.send("Command Sent");
 });
+app.get("/nextStep/:x", function(req, res){
+    sendCommand({control: "nextStep", timestep: req.params.x});
+    res.send("Command Sent");
+});
+
+// Init Model
+app.get("/init", function(req, res){
+    sendCommand({control: "reset"});
+    sendCommand({
+        "control": "initApp",
+        "timestep": 2,
+        "duration": 30,
+        "cells": [
+            {
+                "name": "SA",
+                "population": 50,
+                "exposed": 12,
+                "infected": 3,
+                "recovered": 2,
+                "deaths": 1,
+                "beta": 0.9620689655172413,
+                "sigma": 0.2,
+                "gamma": 0.3448275862068965,
+                "mu": 0.01,
+                "x": 0.14
+            },
+            {
+            "name": "VIC",
+            "population": 70,
+            "exposed": 5,
+            "infected": 30,
+            "recovered": 12,
+            "deaths": 20,
+            "beta": 0.9620689655172413,
+            "sigma": 0.2,
+            "gamma": 0.3448275862068965,
+            "mu": 0.01,
+            "x": 0.14
+        },
+        {
+            "name": "NSW",
+            "population": 80,
+            "exposed": 12,
+            "infected": 15,
+            "recovered": 18,
+            "deaths": 10,
+            "beta": 0.9620689655172413,
+            "sigma": 0.2,
+            "gamma": 0.3448275862068965,
+            "mu": 0.01,
+            "x": 0.14
+        }
+        ]
+    });
+    res.send("Command Sent");
+})
 
 
 // 404 error handler
@@ -170,26 +228,3 @@ https.createServer({
 }, app).listen(port, function(){
     console.log('Listening on: ' + port);
 })
-
-
-
-// Websocket Server ( Client to Node Js Communication)
-// const wss = new WebSocket.Server({ port: 3001 });
-
-// wss.on("connection", function connection(ws) {
-//     ws.on('message', function incoming(message) {
-//         console.log("Recieved Message: " + message);
-//         var input = JSON.parse(message);
-//         if(input[control] == "getAllCells"){
-//             updateCells();
-//             ws.send()
-//         }
-        
-        
-//         ws.send(message);
-//     });
-
-//     ws.on('close', function(){
-//         console.log("WS Disconnect");
-//     })
-// })
