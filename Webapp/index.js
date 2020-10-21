@@ -28,13 +28,17 @@ app.use(session({
   }));
 module.exports = app;
 
+// Python Epidemic Model
+var {spawn} = require("child_process");
+var modelProcess = spawn("python3", ["../Epedemic\ Modelling/ModelWebSock-Server.py"]);
+function stopModel(){ modelProcess.kill(); }
+
 //////////////////////////////
 //      SERVER ROUTES       //
 //////////////////////////////
 
 // Run pop simulation (S1 Program)
-app.post("/popsim", function(req, res){
-    var {spawn} = require("child_process");    
+app.post("/popsim", function(req, res){   
     var cmd = ["../Population Simulation/Program/popsim.py", "-i", "../Population Simulation/Program/test_data/test1.csv", "-nd", "-s", "graphs/image"]
 
     // Duration Value
@@ -228,3 +232,6 @@ https.createServer({
 }, app).listen(port, function(){
     console.log('Listening on: ' + port);
 })
+
+// Kill python subprocess on program close
+process.on("exit", stopModel);

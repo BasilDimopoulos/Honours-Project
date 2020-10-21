@@ -20,59 +20,61 @@ function mainCell(num){
     $("#maincanvas-div").append("<canvas id='maincell' class='p-0 m-0' width=" + $("#maincanvas-div-table").width() + "px  style='height: 60vh;' ></canvas>");
     var mainchart = document.getElementById("maincell").getContext("2d");
 
-    if($("#fchartType").val() != "line"){
-        mainLineChart = new Chart(mainchart, {
-            type: $("#fchartType").val(),
-            data:{
-                labels: ["Susceptible", "Exposed", "Infected", "Recovered", "Deaths"],
-                datasets:[{
-                    label: "Test",
-                    data: [ 
-                        cellcont[num]["susceptibles"].slice(-1)[0], 
-                        cellcont[num]["exposed"].slice(-1)[0], 
-                        cellcont[num]["infected"].slice(-1)[0], 
-                        cellcont[num]["recovered"].slice(-1)[0], 
-                        cellcont[num]["deaths"].slice(-1)[0]
-                    ],
-                    backgroundColor : colours
-                }],
-            },
-            options:{
-                responsive:true,
-                maintainAspectRatio: false,
-                title: { display: true, text: cellcont[num]["name"] },
-                legend: { display: ($("#fchartType").val() != "bar" && $("#fchartType").val() != "radar") && ($("#fchartType").val() != "horizontalBar")},
-                
-            }
-        });
-    } else {
-        mainLineChart = new Chart(mainchart, {
-            type: "line",
-            data:{
-                labels: times,
-                datasets:[
-                    { label: "Susceptibles", data: cellcont[num]["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], fill: false },
-                    { label: "Exposed", data: cellcont[num]["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], fill: false },
-                    { label: "Infected", data: cellcont[num]["infected"], borderColor: colours[2], pointHighlightFill: colours[2], fill: false },
-                    { label: "Recovered", data: cellcont[num]["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], fill: false },
-                    { label: "Deaths", data: cellcont[num]["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], fill: false },
-                ],
-            },
-            options: {
-                title: { display: true, text: cellcont[num]["name"] },
-                legend: { display: true, beginAtZero: true },
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    yAxes: [{ ticks: { display: true, beginAtZero: true,
-                        callback: function(label, index, labels) {
-                            return numberlabel(label, 1);
-                        }
-                    }}],
-                    xAxes: [{ position: 'bottom' }]
+    if(cellcont[num]["susceptibles"] != undefined){
+        if($("#fchartType").val() != "line"){
+            mainLineChart = new Chart(mainchart, {
+                type: $("#fchartType").val(),
+                data:{
+                    labels: ["Susceptible", "Exposed", "Infected", "Recovered", "Deaths"],
+                    datasets:[{
+                        label: "Test",
+                        data: [ 
+                            cellcont[num]["susceptibles"].slice(-1)[0], 
+                            cellcont[num]["exposed"].slice(-1)[0], 
+                            cellcont[num]["infected"].slice(-1)[0], 
+                            cellcont[num]["recovered"].slice(-1)[0], 
+                            cellcont[num]["deaths"].slice(-1)[0]
+                        ],
+                        backgroundColor : colours
+                    }],
                 },
-            }
-        });
+                options:{
+                    responsive:true,
+                    maintainAspectRatio: false,
+                    title: { display: true, text: cellcont[num]["name"] },
+                    legend: { display: ($("#fchartType").val() != "bar" && $("#fchartType").val() != "radar") && ($("#fchartType").val() != "horizontalBar")},
+                    
+                }
+            });
+        } else {
+            mainLineChart = new Chart(mainchart, {
+                type: "line",
+                data:{
+                    labels: times,
+                    datasets:[
+                        { label: "Susceptibles", data: cellcont[num]["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], fill: false },
+                        { label: "Exposed", data: cellcont[num]["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], fill: false },
+                        { label: "Infected", data: cellcont[num]["infected"], borderColor: colours[2], pointHighlightFill: colours[2], fill: false },
+                        { label: "Recovered", data: cellcont[num]["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], fill: false },
+                        { label: "Deaths", data: cellcont[num]["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], fill: false },
+                    ],
+                },
+                options: {
+                    title: { display: true, text: cellcont[num]["name"] },
+                    legend: { display: true, beginAtZero: true },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{ ticks: { display: true, beginAtZero: true,
+                            callback: function(label, index, labels) {
+                                return numberlabel(label, 1);
+                            }
+                        }}],
+                        xAxes: [{ position: 'bottom' }]
+                    },
+                }
+            });
+        }
     }
 }
 
@@ -86,57 +88,61 @@ function numberlabel(label, fixed){
 
 // Draw sidebar cells
 function sideCells(){    
-    // Get array of time stamps for cells
-    times = [];
-    for(var i = 0; i < cellcont[0]["susceptibles"].length; i++) times.push(i);
-    
-    // Empty existing cell stack
-    $("#cells-stack").empty();
-    $.each(cellCharts, function(i, key){
-        if(key != undefined) key.destroy();
-    });
-    cellCharts = [];
+    if(cellcont[0]["susceptibles"] != undefined){
 
-    // Go through JSON input and create Charts
-    $.each(cellcont, function(i, key){
-        $("#cells-stack").append("<canvas id='sidecell-" + i + "' width=" + $("#cells-stack-table").width() + "px height=200px ></canvas>");
-        if(i != (cellcont.length - 1)) $("#cells-stack").append("<hr />");
-        var current = document.getElementById("sidecell-" + i).getContext("2d");
-        isfirst = (i == 0);
+        // Get array of time stamps for cells
+        var times = [];
+        for(var i = 0; i < cellcont[0]["susceptibles"].length; i++) times.push(i);
         
-        // Create cell chat objects
-        var newchart = new Chart(current, {
-            type: "line",
-            data:{
-                labels: times,
-                datasets:[
-                    { label: "Susceptibles", data: key["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], pointcolor: colours[0], fill: false, hidden: seird_hidden[0] },
-                    { label: "Exposed", data: key["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], pointcolor: colours[1], fill: false, hidden: seird_hidden[1] },
-                    { label: "Infected", data: key["infected"], borderColor: colours[2], pointHighlightFill: colours[2], pointcolor: colours[2], fill: false, hidden: seird_hidden[2] },
-                    { label: "Recovered", data: key["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], pointcolor: colours[3], fill: false, hidden: seird_hidden[3] },
-                    { label: "Deaths", data: key["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], pointcolor: colours[4], fill: false, hidden: seird_hidden[4] },
-                ],
-            },
-            options: {
-                title: { display: true, text: key["name"] },
-                legend: { display: false },
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    yAxes: [{ ticks: { display: true, beginAtZero: true, maxTicksLimit: 4,
-                        callback: function(label, index, labels) {
-                            return numberlabel(label, 1);
-                        }
-                    }}],
-                    xAxes: [{ position: 'bottom' }]
-                },
-                onClick: function(event, array) {
-                    mainCell(i);
-                }
-            }
+        // Empty existing cell stack
+        $("#cells-stack").empty();
+        $.each(cellCharts, function(i, key){
+            if(key != undefined) key.destroy();
         });
-        cellCharts.push(newchart);
-    });
+        cellCharts = [];
+
+        // Go through JSON input and create Charts
+        $.each(cellcont, function(i, key){
+            
+            // Append cells to div
+            $("#cells-stack").append("<canvas id='sidecell-" + i + "' width=" + $("#cells-stack-table").width() + "px height=200px ></canvas>");
+            if(i != (cellcont.length - 1)) $("#cells-stack").append("<hr />");
+            var current = document.getElementById("sidecell-" + i).getContext("2d");
+            
+            // Create cell chat objects
+            var newchart = new Chart(current, {
+                type: "line",
+                data:{
+                    labels: times,
+                    datasets:[
+                        { label: "Susceptibles", data: key["susceptibles"], borderColor: colours[0], pointHighlightFill: colours[0], pointcolor: colours[0], fill: false, hidden: seird_hidden[0] },
+                        { label: "Exposed", data: key["exposed"], borderColor: colours[1], pointHighlightFill: colours[1], pointcolor: colours[1], fill: false, hidden: seird_hidden[1] },
+                        { label: "Infected", data: key["infected"], borderColor: colours[2], pointHighlightFill: colours[2], pointcolor: colours[2], fill: false, hidden: seird_hidden[2] },
+                        { label: "Recovered", data: key["recovered"], borderColor: colours[3], pointHighlightFill: colours[3], pointcolor: colours[3], fill: false, hidden: seird_hidden[3] },
+                        { label: "Deaths", data: key["deaths"], borderColor: colours[4], pointHighlightFill: colours[4], pointcolor: colours[4], fill: false, hidden: seird_hidden[4] },
+                    ],
+                },
+                options: {
+                    title: { display: true, text: key["name"] },
+                    legend: { display: false },
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        yAxes: [{ ticks: { display: true, beginAtZero: true, maxTicksLimit: 4,
+                            callback: function(label, index, labels) {
+                                return numberlabel(label, 1);
+                            }
+                        }}],
+                        xAxes: [{ position: 'bottom' }]
+                    },
+                    onClick: function(event, array) {
+                        mainCell(i);
+                    }
+                }
+            });
+            cellCharts.push(newchart);
+        });
+    }
 }
 
 // make get request for json content
