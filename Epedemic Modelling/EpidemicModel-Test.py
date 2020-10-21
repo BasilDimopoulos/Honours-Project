@@ -29,8 +29,9 @@ class TESTING(unittest.TestCase):
         c1.setInitCond([1,27,0,0,500])
         c1.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
         EM.app.timeStep = 2
-        c1.updateOutputs()
-        self.assertEqual(c1.getOutputs(), (451.71881842639687, 19.61676947322724, 20.901963282821953, 7.527802888432526, 0.23464592912168014))
+        c1.updateOutputs(EM.app.timeStep)
+        correctOutput = [472.0, 451.71881842639687], [1.0, 19.61676947322724], [27.0, 20.901963282821953], [0.0, 7.527802888432526], [0.0, 0.23464592912168014]
+        self.assertEqual(c1.getOutputs(), correctOutput)
 
 
 # Start Unit Tests
