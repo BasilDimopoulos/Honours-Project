@@ -98,11 +98,17 @@ app.get('/load', function(req, res){
 });
 
 app.get("/instructor", function(req, res){
+    res.set("Cache-Control", "no-store");
     if(serverInit){
         res.sendFile(path.join(__dirname + "/pages/instructor.html"));
     } else {
         res.sendFile(path.join(__dirname + "/pages/setup.html"));
     }
+});
+
+app.get("/student", function(req, res){
+    res.set("Cache-Control", "no-store");
+    res.sendFile(path.join(__dirname + "/pages/student-login.html"));
 });
 
 app.post("/init", function(req, res){
@@ -142,9 +148,7 @@ app.use("/scripts", express.static("pages/scripts"));
 app.use("/stylesheets", express.static("pages/stylesheets"));
 app.use("/images", express.static("pages/images"));
 
-app.get("/student", function(req, res){
-    res.send("Student View Goes Here");
-});
+
 
 
 // TESTING function calls between python model and nodejs
