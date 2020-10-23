@@ -143,7 +143,7 @@ app.post("/init", function(req, res){
         student.studentName = "";
         studentCells.push(student);
     }
-    
+
     sendCommand({control: "reset"});
     sendCommand(setup);
     serverInit = true;
@@ -199,6 +199,11 @@ app.get("/accessCodes", function(req, res){
     }
     if(studentCells.length == 0) output = "No codes assigned";
     res.send(output);
+});
+
+app.get("/accessCodes.json", function(req, res){
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify(studentCells));
 });
 
 app.use("/scripts", express.static("pages/scripts"));
