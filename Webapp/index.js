@@ -106,11 +106,10 @@ app.get("/instructor", function(req, res){
     }
 });
 
-app.get("/student", function(req, res){
-    res.set("Cache-Control", "no-store");
-    res.sendFile(path.join(__dirname + "/pages/student-login.html"));
-});
+// Setup student Cells
+var studentCells = [];
 
+// Initialise simulation
 app.post("/init", function(req, res){
 
     var setup = new Object();
@@ -135,12 +134,60 @@ app.post("/init", function(req, res){
         currentCell.x = parseFloat(req.body.cells[i].returnToSusceptibility);
         
         setup.cells.push(currentCell);
+
+        // Generate Student Cells
+        var student = new Object();
+        student.cellName = req.body.cells[i].cellName;
+        student.accessCode = genAccessCode();
+        student.claimed = false;
+        student.studentName = "";
+        studentCells.push(student);
     }
     
+    console.log(studentCells);
+
     sendCommand({control: "reset"});
     sendCommand(setup);
     serverInit = true;
     res.redirect("/instructor");
+});
+
+// Generate unique 4 char student access code
+function genAccessCode(){
+    while(true){
+        var accessCode = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 4).toUpperCase();
+        var found = false;
+        for(var i = 0; i < studentCells.length; i++){
+            if(accessCode == studentCells[i].accessCode) found = true;
+        }
+        if(!found) return accessCode;
+    }
+}
+
+// Student Login Handler
+app.get("/student", function(req, res){
+    res.set("Cache-Control", "no-store");
+    res.sendFile(path.join(__dirname + "/pages/student-login.html"));
+});
+
+// Student Login Request Handler
+app.post("/student", function(req, res){
+    res.set("Cache-Control", "no-store");
+
+    var found = false;
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].accessCode == req.body.inputCode){
+            found = true;
+            studentCells[i].studentName = req.body.inputName;
+            break;
+        }
+    }
+
+    if(found){
+        res.send("Success");
+    } else {
+        res.redirect("/student?loginerror=fail");
+    }    
 });
 
 
