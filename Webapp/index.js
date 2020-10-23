@@ -144,8 +144,6 @@ app.post("/init", function(req, res){
         studentCells.push(student);
     }
     
-    console.log(studentCells);
-
     sendCommand({control: "reset"});
     sendCommand(setup);
     serverInit = true;
@@ -179,6 +177,7 @@ app.post("/student", function(req, res){
         if(studentCells[i].accessCode == req.body.inputCode){
             found = true;
             studentCells[i].studentName = req.body.inputName;
+            studentCells[i].claimed = true;
             break;
         }
     }
@@ -190,6 +189,17 @@ app.post("/student", function(req, res){
     }    
 });
 
+// Temp List of student Access Codes
+app.get("/accessCodes", function(req, res){
+    var output = "";
+    for(var i = 0; i < studentCells.length; i++){
+        output += "<strong>" + studentCells[i].cellName + ":</strong> " + studentCells[i].accessCode;
+        if(studentCells[i].claimed) output += " - Claimed By: " + studentCells[i].studentName;
+        output += "<br />"
+    }
+    if(studentCells.length == 0) output = "No codes assigned";
+    res.send(output);
+});
 
 app.use("/scripts", express.static("pages/scripts"));
 app.use("/stylesheets", express.static("pages/stylesheets"));
