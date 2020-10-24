@@ -90,7 +90,7 @@ var contentstate = [new Date, { status: "notset" }];
 
 // Index Route
 app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname + "/pages/root.html"));
+    res.redirect("/student");
 });
 
 app.get('/load', function(req, res){

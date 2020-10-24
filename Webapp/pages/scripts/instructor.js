@@ -1,5 +1,5 @@
 
-// 
+// Student access codes 
 $(document).ready(function(){
     $("#accessCodes").click(function(){
         var output = "";
