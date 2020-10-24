@@ -9,6 +9,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
         <script src="https://kit.fontawesome.com/9b11a0a445.js" crossorigin="anonymous"></script>
         <script src="scripts/mainbox.js"></script>
+        <script src="scripts/instructor.js"></script>
         <style>
             /* width */
             ::-webkit-scrollbar {
@@ -43,6 +44,12 @@
                     </h4>
                     <ul class="list-group mb-3">
                         
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <button class="btn btn-primary btn-lg btn-block" id="accessCodes" data-toggle="modal" data-target="#exampleModalCenter">Student Access Codes</button>
+                            </div>
+                        </li>
+
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>
                                 <label for="fduration">Control 1:</label>
@@ -154,8 +161,26 @@
 
             </div> -->
 
-            
+            <!-- Modal Box for student access codes -->
+            <div id="accessCodesBox">
+                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLongTitle">Student Access Codes</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body" id="accessCodesList">
+                          ...
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
 
+            <!-- Bottom Footer -->
             <div class="footer fixed-bottom fill-height">
                 <div class="footer-copyright p-2 text-center bg-dark text-light" >
                     <a>Group 9 - Software Engineering Research Project 2020</a>

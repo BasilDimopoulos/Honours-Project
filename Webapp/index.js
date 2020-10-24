@@ -175,10 +175,14 @@ app.post("/student", function(req, res){
     var found = false;
     for(var i = 0; i < studentCells.length; i++){
         if(studentCells[i].accessCode == req.body.inputCode){
-            found = true;
-            studentCells[i].studentName = req.body.inputName;
-            studentCells[i].claimed = true;
-            break;
+            if (studentCells[i].claimed){
+                break;
+            } else {
+                found = true;
+                studentCells[i].studentName = req.body.inputName;
+                studentCells[i].claimed = true;
+                break;
+            }
         }
     }
 
@@ -262,10 +266,15 @@ app.get("/nextStep/:x", function(req, res){
 
 // reset Model
 app.get("/reset", function(req, res){
-    sendCommand({control: "reset"});
-    serverInit = false;
+    reset();
     res.send("Command Sent");
 })
+
+function reset(){
+    sendCommand({control: "reset"});
+    serverInit = false;
+    studentCells = [];
+}
 
 
 // 404 error handler
