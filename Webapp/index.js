@@ -162,10 +162,38 @@ function genAccessCode(){
     }
 }
 
+// Student Session
+app.get("/student/:id", function(req, res){
+    res.set("Cache-Control", "no-store");
+    var found = false;
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].uuid == req.session.id && studentCells[i].accessCode == req.params.id){
+            found = true;
+            break;
+        }
+    }
+    
+    if(!found){
+        res.redirect("/student?loginerror=fail");
+    } else {
+        res.send("Logged In: " + req.params.id );
+    }
+});
+
 // Student Login Handler
 app.get("/student", function(req, res){
     res.set("Cache-Control", "no-store");
-    res.sendFile(path.join(__dirname + "/pages/student-login.html"));
+    var found = false;
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].uuid == req.session.id){
+            res.redirect("/student/" + studentCells[i].accessCode);
+            found = true;
+            break;
+        }
+    }    
+    if(!found){
+        res.sendFile(path.join(__dirname + "/pages/student-login.html"));
+    }
 });
 
 // Student Login Request Handler
@@ -181,13 +209,14 @@ app.post("/student", function(req, res){
                 found = true;
                 studentCells[i].studentName = req.body.inputName;
                 studentCells[i].claimed = true;
+                studentCells[i].uuid = req.session.id;
                 break;
             }
         }
     }
 
     if(found){
-        res.send("Success");
+        res.redirect("/student/" + req.body.inputCode);
     } else {
         res.redirect("/student?loginerror=fail");
     }    
@@ -275,6 +304,21 @@ function reset(){
     serverInit = false;
     studentCells = [];
 }
+
+// Policies return
+app.get("/policies.json", function(req, res){
+    var out = [];
+    for(var i = 0; i < 5; i++){
+        var pol = new Object();
+        pol.policyName = "Mask " + i;
+        pol.policyAvailable = (i % 2 == 0);
+        pol.policyEnabled = (i % 3 == 0);
+        pol.policyConform = Math.random();
+        out.push(pol);
+    }
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify(out));
+});
 
 
 // 404 error handler
