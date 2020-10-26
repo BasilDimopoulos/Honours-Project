@@ -129,8 +129,8 @@ nextBtnThird.addEventListener("click", function(event){
   progressText[current - 1].classList.add("active");
   current += 1;
 
-  var confirmation = prepareData();
-  console.log(confirmation);
+  // var confirmation = prepareData();
+  // console.log(confirmation);
 });
 
 function prepareData(){
