@@ -117,6 +117,7 @@ app.post("/init", function(req, res){
     setup.timestep = parseInt(req.body.sim.timeStep);
     setup.duration = parseInt(req.body.sim.simulationDays);
     setup.cells = [];
+    setup.policies = [];
 
     for(var i = 0; i < req.body.cells.length; i++){
         var currentCell = new Object();
@@ -142,6 +143,18 @@ app.post("/init", function(req, res){
         student.claimed = false;
         student.studentName = "";
         studentCells.push(student);
+    }
+
+    for(var i = 0; i < req.body.policies.length; i++){
+        var currentPolicy = new Object();
+        currentPolicy.name = req.body.policies[i].policyName;
+        currentPolicy.betaMult = req.body.policies[i].infectionMultiplier;
+        currentPolicy.sigmaMult = req.body.policies[i].incubationMultiplier;
+        currentPolicy.muMult = 1;
+        currentPolicy.xMult = req.body.policies[i].susceptibilityMultiplier;
+        currentPolicy.adherence = req.body.policies[i].complianceMultiplier;
+
+        setup.policies.push(currentPolicy);
     }
 
     sendCommand({control: "reset"});
