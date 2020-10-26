@@ -50,19 +50,21 @@ function displayPolicies(){
         $.each(data[lastMain].policies, function(i, key){
             output += '<div class="form-group form-inline col">';
             output += '<label for="policy-'+ i +'">' + key.policyName + ': </label>'
-            output += '<input type="checkbox" class="form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'"';
+            output += '<input type="checkbox" class="pol-cont form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'"';
             if(!key.policyAvailable) output += ' disabled="disabled"';
             if(key.policyEnabled) output += ' checked="true"';        
             output += '>'
-            output += '<input type="number" class="form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
+            output += '<input type="number" step="0.01" class="pol-cont form-control ml-2" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
             if(!key.policyAvailable) output += ' disabled="disabled"';        
             output += '>'
             output += '</div>'
             if(i%2 != 0) output += '<div class="w-100"></div>';
         });
-        output += '<div><button class="btn btn-primary" disabled="disabled">Update</button></div>';
+        output += '<div class="w-100"></div>';
+        output += '<div><button class="m-3 btn btn-primary" id="policy-update-btn" disabled="disabled" onclick="postPolicyChanges()">Update</button></div>';
     }).done(function(){
         $("#policy-controls").html(output);
+        policyChanges();
     });
 }
     
@@ -94,4 +96,37 @@ function updatePolicyAvailability(len){
         displayPolicies();
         controlPolicyAvailability();
     });
+}
+
+// Check if there are any changes in the policy table
+function policyChanges(){
+    $(".pol-cont").on("change", function(){
+        var change = false;
+        $.get("/policies.json", function(data){
+            $.each(data[lastMain].policies, function(i, key){
+                if($("#policy-" + i).prop('checked') != data[lastMain].policies[i].policyEnabled){ change = true; } 
+                if($("#policy-" + i + "-conform").val() != data[lastMain].policies[i].policyConform.toFixed(2)) { change = true; }
+            });
+        }).done(function(){
+            $("#policy-update-btn").prop("disabled", !change);
+        });
+    });
+};
+
+// Post policy changes
+function postPolicyChanges(){
+    console.log("POST CHANGES");
+    $.get("/policies.json", function(data){
+        var out = [];
+        $.each(data[lastMain].policies, function(i, key){
+                var obj = new Object();
+                obj.enabled = $("#policy-" + i).prop('checked');
+                obj.conform = $("#policy-" + i + "-conform").val();
+                out.push(obj);
+        });
+        out = { cell: lastMain, policies: out}
+        $.post("/policyChanges", out ).done(function(){
+            displayPolicies()
+        });
+    }); 
 }

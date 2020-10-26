@@ -184,10 +184,24 @@ app.post("/policyAvailability", function(req, res){
     for(var i = 0; i < req.body.data.length; i++){
         for(var j = 0; j < listPolicies.length; j++){
             listPolicies[j].policies[i].policyAvailable = (req.body.data[i] == "true");
+            if(listPolicies[j].policies[i].policyAvailable  == false){ listPolicies[j].policies[i].policyEnabled = false; }
         }
     }
     res.send();
 });
+
+// 
+app.post("/policyChanges", function(req, res){
+    for(var i = 0; i < req.body.policies.length; i++){
+        if(listPolicies[req.body.cell].policies[i].policyAvailable){
+            listPolicies[req.body.cell].policies[i].policyEnabled = (req.body.policies[i].enabled == "true");
+        } else {
+            listPolicies[req.body.cell].policies[i].policyEnabled = false;
+        }
+        listPolicies[req.body.cell].policies[i].policyConform = parseFloat(req.body.policies[i].conform);
+    }
+    res.send();
+})
 
 // Generate unique 4 char student access code
 function genAccessCode(){
