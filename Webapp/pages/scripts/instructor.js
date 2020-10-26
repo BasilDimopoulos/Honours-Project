@@ -34,7 +34,7 @@ function displayPolicies(){
             if(!key.policyAvailable) output += ' disabled="disabled"';
             if(key.policyEnabled) output += ' checked="true"';        
             output += '>'
-            output += '<input type="number" class="form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'-conform" value='+ key.policyConform
+            output += '<input type="number" class="form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
             if(!key.policyAvailable) output += ' disabled="disabled"';        
             output += '>'
             output += '</div>'
