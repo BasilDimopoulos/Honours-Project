@@ -37,7 +37,7 @@ class Cell{
 class Policy{
   constructor(){
     var policyName = "Name";
-    var infectionMultipler = 0.0;
+    var infectionMultiplier = 0.0;
     var incubationMultiplier = 0.0;
     var recoveryMultiplier = 0.0;
     var susceptibilityMultiplier = 0.0;
@@ -195,7 +195,7 @@ function getPageThreeData(){
   for(var i = 0; i < numberofPolicies; i ++){
     policies.push(new Policy);
     policies[i].policyName = $(".policy-name")[i].value;
-    policies[i].infectionMultipler = $(".infection-multiplier")[i].value;
+    policies[i].infectionMultiplier = $(".infection-multiplier")[i].value;
     policies[i].incubationMultiplier = $(".incubation-multiplier")[i].value;
     policies[i].recoveryMultiplier = $(".recovery-multiplier")[i].value;
     policies[i].susceptibilityMultiplier = $(".susceptibility-multiplier")[i].value;

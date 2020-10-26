@@ -11,6 +11,7 @@ var latestServer = Date.now();
 function mainCell(num){
     if(num == undefined) num = lastMain;
     lastMain = num;
+    displayPolicies();
    
     if(mainLineChart != undefined) mainLineChart.destroy();
     
@@ -159,11 +160,13 @@ function getCells(referrer){
                     cellcont = data['cells'];
                     sideCells();
                     mainCell();
+                    displayPolicies();
                 }
             }  else {                
                 cellcont = data['cells'];
                 sideCells();
                 mainCell(0);
+                displayPolicies(0);
             } 
         }
     });

@@ -106,8 +106,9 @@ app.get("/instructor", function(req, res){
     }
 });
 
-// Setup student Cells
+// Setup student and policy Cells
 var studentCells = [];
+var listPolicies = [];
 
 // Initialise simulation
 app.post("/init", function(req, res){
@@ -143,16 +144,31 @@ app.post("/init", function(req, res){
         student.claimed = false;
         student.studentName = "";
         studentCells.push(student);
+
+        // Setup cell policies
+        var cell = new Object();
+        cell.name = req.body.cells[i].cellName;
+        cell.policies = [];
+        for(var j=0; j < req.body.policies.length; j++){            
+            var policy = new Object();
+            policy.policyName = req.body.policies[j].policyName;
+            policy.policyAvailable = false;
+            policy.policyEnabled = false;
+            policy.policyConform = parseFloat(req.body.policies[j].complianceMultiplier)  + Math.random();
+            cell.policies.push(policy);
+        }
+        listPolicies.push(cell);
     }
 
     for(var i = 0; i < req.body.policies.length; i++){
         var currentPolicy = new Object();
         currentPolicy.name = req.body.policies[i].policyName;
-        currentPolicy.betaMult = req.body.policies[i].infectionMultiplier;
-        currentPolicy.sigmaMult = req.body.policies[i].incubationMultiplier;
-        currentPolicy.muMult = 1;
-        currentPolicy.xMult = req.body.policies[i].susceptibilityMultiplier;
-        currentPolicy.adherence = req.body.policies[i].complianceMultiplier;
+        currentPolicy.betaMult = parseFloat(req.body.policies[i].infectionMultiplier);
+        currentPolicy.sigmaMult = parseFloat(req.body.policies[i].incubationMultiplier);
+        currentPolicy.gammaMult = parseFloat(req.body.policies[i].recoveryMultiplier);
+        currentPolicy.muMult = parseFloat(1);
+        currentPolicy.xMult = parseFloat(req.body.policies[i].susceptibilityMultiplier);
+        currentPolicy.adherence = parseFloat(req.body.policies[i].complianceMultiplier);
 
         setup.policies.push(currentPolicy);
     }
@@ -161,6 +177,16 @@ app.post("/init", function(req, res){
     sendCommand(setup);
     serverInit = true;
     res.redirect("/instructor");
+});
+
+// Policy Availablity Control
+app.post("/policyAvailability", function(req, res){
+    for(var i = 0; i < req.body.data.length; i++){
+        for(var j = 0; j < listPolicies.length; j++){
+            listPolicies[j].policies[i].policyAvailable = (req.body.data[i] == "true");
+        }
+    }
+    res.send();
 });
 
 // Generate unique 4 char student access code
@@ -333,21 +359,13 @@ function reset(){
     sendCommand({control: "reset"});
     serverInit = false;
     studentCells = [];
+    listPolicies = [];
 }
 
 // Policies return
 app.get("/policies.json", function(req, res){
-    var out = [];
-    for(var i = 0; i < 5; i++){
-        var pol = new Object();
-        pol.policyName = "Mask " + i;
-        pol.policyAvailable = (i % 2 == 0);
-        pol.policyEnabled = (i % 3 == 0);
-        pol.policyConform = Math.random();
-        out.push(pol);
-    }
     res.setHeader("Content-Type", "application/json");
-    res.send(JSON.stringify(out));
+    res.send(JSON.stringify(listPolicies));
 });
 
 

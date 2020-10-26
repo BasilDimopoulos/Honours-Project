@@ -4,6 +4,10 @@ $(document).ready(function(){
     $("#accessCodes").click(function(){
         updateAccessCodes();
     });
+
+    $("#policyCodes").click(function(){
+        controlPolicyAvailability();
+    });
     displayPolicies();
 });
 
@@ -43,7 +47,7 @@ function removeStudent(id){
 function displayPolicies(){
     var output = "";
     $.get("/policies.json", function(data){
-        $.each(data, function(i, key){
+        $.each(data[lastMain].policies, function(i, key){
             output += '<div class="form-group form-inline col">';
             output += '<label for="policy-'+ i +'">' + key.policyName + ': </label>'
             output += '<input type="checkbox" class="form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'"';
@@ -56,8 +60,38 @@ function displayPolicies(){
             output += '</div>'
             if(i%2 != 0) output += '<div class="w-100"></div>';
         });
+        output += '<div><button class="btn btn-primary" disabled="disabled">Update</button></div>';
     }).done(function(){
         $("#policy-controls").html(output);
     });
 }
     
+
+function controlPolicyAvailability(){
+    var output = "";
+    $.get("/policies.json", function(data){
+        output += '<div>';
+        $.each(data[0].policies, function(i, key){
+            output += '<div class="form-group form-inline">';
+            output += '<label for="policycontrol-'+ i +'">' + key.policyName + ': </label>'
+            output += '<input type="checkbox" class="form-control ml-2" id="policycontrol-'+ i +'" name="policycontrol-'+ i +'"';
+            if(key.policyAvailable) output += ' checked="true"';   
+            output += '></div>';
+        });
+        output += '<input class="btn btn-primary form-control" type="submit" value="Submit" onclick="updatePolicyAvailability('+data[0].policies.length+');">'
+        output += '</div>';
+    }).done(function(){
+        $("#policyAvailability").html(output);
+    });
+}
+
+function updatePolicyAvailability(len){
+    var states = [];
+    for(var i = 0; i < len; i++){
+        states.push($("#policycontrol-" + i).prop('checked'));
+    }
+    $.post("/policyAvailability", {data: states}).done(function(){
+        displayPolicies();
+        controlPolicyAvailability();
+    });
+}
