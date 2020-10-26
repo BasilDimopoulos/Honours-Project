@@ -27,6 +27,7 @@ class Application:
     def __init__(self):
         self.initAt = datetime.now()
         self.cells = []
+        self.policies = []
 
         
 
@@ -152,6 +153,35 @@ class Cell:
         if len(self.N) != 0:
             return self.N[-1]
 
+class Policy:
+    # --- Start member variables ---
+    newId = itertools.count().__next__
+    policyName = ""
+    betaMult = float(0)
+    sigmaMult = float(0)
+    gammaMult = float(0)
+    muMult = float(0)
+    xMult = float(0)
+    defaultAhderence = 0
+
+    # --- End member variables ---
+
+    def __init__(self, name):
+        self.id = Policy.newId()
+        self.policyName = name
+
+    def setPolicyDetails(self, details):
+        self.betaMult, self.sigmaMult, self.gammaMult, self.muMult, self.xMult, self.defaultAhderence = details
+
+    def getPolicy(self):
+        policyDetails = [self.id, self.policyName, self.betaMult, self.sigmaMult, self.gammaMult, self.muMult, self.xMult, self.defaultAhderence]
+        return policyDetails
+
+    def print(self):
+        print("id: " + str(self.id) + "\t" + self.policyName + "\t")
+        print("Policy Details: " + str(self.getPolicy()[2:]))
+        print()
+
 
 def ode_model(z, t, beta, sigma, gamma, mu, x):
     """
@@ -181,6 +211,29 @@ def initApp(data):
     # set the timestep and duration of the simulation
     app.timeStep = data['timestep'] + 1
     app.duration = data['duration']
+
+    # Create policy objects with their speicifed details
+    policyList = data['policies']
+
+    tempIt = 0
+    for policy in policyList:
+        app.policies.append(Policy(policy['name']))
+        policyDetails = [policy['betaMult'], policy['sigmaMult'], policy['gammaMult'], policy['muMult'], policy['xMult'], policy['adherence']]
+        # set the policy details
+        app.policies[tempIt].setPolicyDetails(policyDetails)
+        app.policies[tempIt].print()
+
+        tempIt = tempIt + 1
+
+    if len(app.policies) == len(policyList):
+        if 'status' in response:
+            response['status'] = "Successfully initalised policies\n"
+    else:
+        if 'status' in response:
+            response['status'] += ". Error occured when creating policy objects"
+        else:
+            response['status'] = "Error occured when creating policy objects"
+
     # Set the number of cells, create their objects and set their variables
     app.cellCount = len(data['cells'])
 
@@ -210,7 +263,10 @@ def initApp(data):
     if app.cellCount == len(app.cells):
         response['status'] = "Successfully initalised application instance"
     else:
-        response['status'] = "Error occured when creating cell objects"
+        if response['status'] != "":
+            response['status'] = response['status'] + ". Error occured when creating cell objects"
+        else:
+            response['status'] = "Error occured when creating cell objects"
         
     return response
 
