@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Epidemic Instructor</title>
+        <title>Epidemic Student</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
         <script src="https://kit.fontawesome.com/9b11a0a445.js" crossorigin="anonymous"></script>
-        <script src="scripts/mainbox.js"></script>
-        <script src="scripts/instructor.js"></script>
+        <script src="../scripts/mainbox.js"></script>
+        <script src="../scripts/student.js"></script>
         <style>
             /* width */
             ::-webkit-scrollbar {
@@ -34,7 +34,7 @@
     </head>
     <body class="bg-light">
         <div class="container-fluid mh-100">
-            <h2>Epidemic Simulation: Instructor</h2>
+            <h2>Epidemic Simulation: Student</h2>
             <div class="row">
 
                 <!-- Collumn of Controls -->
@@ -43,28 +43,10 @@
                         <span class="text-muted">Controls:</span>
                     </h4>
                     <ul class="list-group mb-3">
-                        
-                        <li class="list-group-item">
-                            <div class="row">
-                                <button class="btn btn-primary btn-lg btn-block col-sm-5 ml-3 m-1" id="accessCodes" data-toggle="modal" data-target="#ModalCenterCont">Access Codes</button>
-                                <button class="btn btn-primary btn-lg btn-block col-sm-6 m-1" id="policyCodes" data-toggle="modal" data-target="#ModalCenterCont2">Policy Availability</button>
-                            </div>
-                        </li>                        
-
-                        <li class="list-group-item ">
-                            <div>
-                                <button class="btn btn-primary btn-lg btn-block mb-1" id="nextStep">Next Step</button>
-                            </div>
-                            <div class="w-100"></div>
-                            <div class="form-group w-100 form-inline">
-                                <button class="btn btn-primary btn-lg btn-block form-inline w-75" id="nextStepn">Step x</button>
-                                <input type="number" min=1 class="form-control form-inline" style="margin-left: 4%; width: 20%; height: auto" id="nextStepn-value" placeholder="1">
-                            </div>
-                        </li>
 
                         <li class="list-group-item">
                             <h5>Policies:</h5>
-                            <div class="row" id="policy-controls" style="height: 53.5vh; overflow-y: scroll; overflow-x: hidden;">
+                            <div class="row" id="policy-controls" style="height: 77vh; overflow-y: scroll; overflow-x: hidden;">
             
                             </div>                            
                         </li>
@@ -197,7 +179,7 @@
             <!-- Bottom Footer -->
             <div class="footer fixed-bottom fill-height">
                 <div class="footer-copyright p-2 text-center bg-dark text-light" >
-                    <a>Group 9 - Software Engineering Research Project 2020</a>
+                    <a>Group 9 - Software Engineering Research Project 2020</a> <a style="float: right; color: #FFFFFF; margin-right: 1%;" href="/" onclick="logoff()">Logoff</a>
                 </div>
             </div>  
 

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Multi Step Form | CodingNepal</title>
+  <title>SERP Epedemic Modelling : Setup | CodingNepal</title>
   <link rel="stylesheet" href="stylesheets/setup-style.css">
   <script src="https://kit.fontawesome.com/a076d05399.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -11,6 +11,58 @@
 </head>
 
 <body>
+  <div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Presets</h2>
+    <div class ="row">
+      <div class = "collumn" style = "padding-right: 30px; width:33.33%">
+        <p style = "font-weight: bold;">Virus Presets</p>
+      <div class = "presetDiv">
+        <p class = "presetTitle">Covid 19</p>
+        <p>beta = 0.96 sigma = 0.20 gamma = 0.34 mu = 0.01 xi = 0.14</p>
+        <p style = "color:#C54091; cursor:pointer;" onclick="virusPreset(0.96,0.20,0.34,0.01,0.14)">Enable</p>
+        </div>
+      </div>
+      <div class = "collumn" style = "width:33.33%">
+        <p style = "font-weight: bold;">Cell Presets</p>
+      <div class = "presetDiv">
+        <p class = "presetTitle">Australia</p>
+        <p>SA, WA, NSW, QLD, NT, ACT, VIC, TAS</p>
+        <p style = "color:#C54091; cursor:pointer;" onclick="australiaPreset()">Enable</p>
+        </div>
+      </div>
+
+      <div class = "collumn" style = "width:33.33%">
+        <p style = "font-weight: bold;">Policy Presets</p>
+      <div class = "Policy Presets">
+        <p class = "presetTitle">Face Masks</p>
+        <p>Infection Rate * 0.75</p>
+        <p style = "color:#C54091; cursor:pointer;" onclick="policyPreset(faceMasks)">Add</p>
+
+        <p class = "presetTitle" style="padding-top:10px;">Medical Treatment</p>
+        <p>Recovery Rate * 1.25</p>
+        <p>Death Rate * 0.5</p>
+        <p style = "color:#C54091; cursor:pointer;" onclick="policyPreset(medicalTreatment)">Add</p>
+
+        <p class = "presetTitle" style="padding-top:10px;">Limited Testing</p>
+        <p>Incubation Rate * 1.5</p>
+        <p style = "color:#C54091; cursor:pointer;" onclick="policyPreset(limitedTesting)">Add</p>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+  <div class ="presetButtonDiv">
+    <p id = "myBtn" class ="presetButton">Presets</p>
+  </div>
   <div class="container">
     <header>Setup</header>
     <div class="progress-bar">
@@ -36,7 +88,7 @@
         <div class="check fas fa-check"></div>
       </div>
       <div class="step">
-        <p>Travel</p>
+        <p>Confirmation</p>
         <div class="bullet">
           <span>4</span>
         </div>
@@ -48,23 +100,26 @@
         <div class="page slide-page">
           <div class="title">Cell and Time Settings</div>
           <div class="field">
-            <div class="label">Excersise Name</div>
-            <input class = "excersise-name" type="text">
+            <div class="label">Exercise Name</div>
+            <input class = "excersise-name" placeholder="My New Simulation" type="text">
           </div>
-          <div class="field">
+          <div class="field tooltip">
+            <span class="tooltiptext">The number of locations in your simulation</span>
             <div class="label">Number of Cells</div>
-            <input type="number" class="CellNumber">
+            <input type="number" placeholder="3" class="CellNumber">
           </div>
-          <div class="field">
+          <div class="field tooltip">
+            <span class="tooltiptext">How long to run the simulation</span>
             <div class="label">Simulation Days</div>
-            <input type="number" class="simulationDays">
+            <input type="number" placeholder="120" class="simulationDays">
           </div>
-          <div class="field">
+          <div class="field tooltip">
+            <span class="tooltiptext">How far in time to skip each iteration</span>
             <div class="label">Time Step</div>
-            <input type="number" class="timeStep">
+            <input type="number" placeholder="5" class="timeStep">
           </div>
           <div class="field">
-            <button class="firstNext next" onclick="newCell()">Next</button>
+            <button class="firstNext next">Next</button>
           </div>
         </div>
 
@@ -76,58 +131,67 @@
               <div class="seirdTitle">Cell </div>
               <div class="field" style = "width:100px;">
                 <div class="label">Cell Name</div>
-                <input class="cellName" type="text">
+                <input class="cellName" placeholder="SA" type="text">
               </div>
 
               <div class="field inital-input">
                 <div class="label">Population</div>
-                <input class="populations" type="number">
+                <input class="populations" placeholder="118420" type="number">
               </div>
 
 
-              <div class="field inital-input">
+              <div class="field inital-input tooltip">
+                <span class="tooltiptext">Inital number of exposed</span>
                 <div class="label">Initial E</div>
-                <input type="number" class="iE">
+                <input type="number" placeholder="10" class="iE">
               </div>
 
-              <div class="field inital-input">
+              <div class="field inital-input tooltip">
+                <span class="tooltiptext">Inital number of infected</span>
                 <div class="label">Initial I</div>
-                <input type="number" class="iI">
+                <input type="number" placeholder="10" class="iI">
               </div>
 
-              <div class="field inital-input">
+              <div class="field inital-input tooltip">
+                <span class="tooltiptext">Inital number of recovered</span>
                 <div class="label">Initial R</div>
-                <input type="number" class="iR">
+                <input type="number" placeholder="10" class="iR">
               </div>
 
-              <div class="field inital-input">
+              <div class="field inital-input tooltip">
+                <span class="tooltiptext">Inital number of deceased</span>
                 <div class="label">Initial D</div>
-                <input type="number" class="iD">
+                <input type="number" placeholder="10" class="iD">
               </div>
 
-              <div class="field equationParameters">
+              <div class="field equationParameters tooltip">
+                <span class="tooltiptext">The probability of 1 person infecting another - Between 0 - 1.0</span>
                 <div class="label">Infection Rate</div>
-                <input type="number" class="infection-rate">
+                <input type="number" placeholder="0.20" class="infection-rate">
               </div>
 
-              <div class="field equationParameters">
+              <div class="field equationParameters tooltip">
+                <span class="tooltiptext">The time it takes for an infected person to show symptoms - Between 0 - 1.0</span>
                 <div class="label">Incubation Rate</div>
-                <input type="number" class="incubation-rate">
+                <input type="number" placeholder="0.20" class="incubation-rate">
               </div>
 
-              <div class="field equationParameters">
+              <div class="field equationParameters tooltip">
+                <span class="tooltiptext">The time it takes to recover - Between 0 - 1.0</span>
                 <div class="label">Recovery Rate</div>
-                <input type="number" class="recovery-rate">
+                <input type="number" placeholder="0.20" class="recovery-rate">
               </div>
 
-              <div class="field equationParameters">
+              <div class="field equationParameters tooltip">
+                <span class="tooltiptext">The probability of death - Between 0 - 1.0</span>
                 <div class="label">Death Rate</div>
-                <input type="number" class="death-rate">
+                <input type="number" placeholder="0.20" class="death-rate">
               </div>
 
-              <div class="field returnToSusceptibilityDiv" style="width:195px;">
+              <div class="field returnToSusceptibilityDiv tooltip" style="width:195px;">
+                <span class="tooltiptext">The time it takes for a recovered person to become susceptible to the virus again - Between 0 - 1.0</span>
                 <div class="label">Return to Susceptibility</div>
-                <input type="number" class="rTS">
+                <input type="number" placeholder="0.20" class="rTS">
               </div>
 
               <div class="field returnToSusceptibilityDiv" style="padding-top: 0px;  width:220px;"></div>
@@ -137,7 +201,7 @@
 
           <div class="
             field btns" id="button_container">
-            <button class="prev-1 prev" onclick="removeCells()">Previous</button>
+            <button class="prev-1 prev">Previous</button>
             <button class="next-1 next">Next</button>
           </div>
         </div>
@@ -152,36 +216,49 @@
               </div>
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Policy Name</div>
-                <input type="text" class = "policy-name">
+                <input type="text" placeholder="Face Masks" class = "policy-name">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Infection Multiplier</div>
-                <input type="number" class = "infection-multiplier">
+                <input type="number" placeholder="0.5" class = "infection-multiplier">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Incubation Multiplier</div>
-                <input type="number" class = "incubation-multiplier">
+                <input type="number" placeholder="2.0" class = "incubation-multiplier">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Recovery Multiplier</div>
-                <input type="number" class = "recovery-multiplier">
+                <input type="number" placeholder="0.5" class = "recovery-multiplier">
               </div>
 
-              <div class="field equationParametersMultiplier">
-                <div class="label">Susceptibility Multiplier</div>
-                <input type="number" class = "susceptibility-multiplier">
+              <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
+                <div class="label">Death Multiplier</div>
+                <input type="number" placeholder="0.5" class = "death-multiplier">
               </div>
-              <div class="field equationParametersMultiplier">
+
+              <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
+                <div class="label">Susceptibility Multiplier</div>
+                <input type="number" placeholder="0.5" class = "susceptibility-multiplier">
+              </div>
+
+              <div class="field equationParametersMultiplier" style="margin-top:25px;!important">
                 <div class="label">Compliance Percentage</div>
-                <input type="number" class = "compliance-multiplier">
+                <input type="number" placeholder="1.0" class = "compliance-multiplier">
+              </div>
+              <div class="field equationParametersMultiplier" style="margin-top:25px;!important">
+              </div>
+              <div class="field equationParametersMultiplier" style="margin-top:25px;!important">
               </div>
             </div>
             <div class = "addNewButton" onclick="addNewPolicy()">
               <button class="">Add New</button>
             </div>
+
+
+
           </div>
 
           <div class="field btns" id="button_container">
@@ -191,9 +268,8 @@
         </div>
 
         <div class="page">
-          <div class="title">Travel:</div>
-
-
+          <div class="title">Confirmation:</div>
+          <p>Submit?</p>
 
           <div class="field btns" id="button_container">
             <button class="prev-3 prev">Previous</button>

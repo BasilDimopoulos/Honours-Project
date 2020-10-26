@@ -27,6 +27,7 @@ class Application:
     def __init__(self):
         self.initAt = datetime.now()
         self.cells = []
+        self.policies = []
 
         
 
@@ -122,11 +123,34 @@ class Cell:
         equationParams = self.beta, self.sigma, self.gamma, self.mu, self.x
         return equationParams
 
-    def updateOutputs(self, step):
+    def updateOutputs(self, step, epiMults):
         # print("Updating outputs for: " + self.name)
         tspan = np.arange(0, step, 1)
         initial_conditions = self.getInitCond()
         params = self.getEquationParams()
+
+        # handle adherence values, current not in use
+        # policyPop = initial_conditions
+        # remainingPop = initial_conditions
+
+        print("Epidemic Multipliers to be applied")
+        print(epiMults)
+        policiesToApply = []
+        for policy in epiMults:
+            for objPol in app.policies:
+                if policy['policyId'] == objPol.id:
+                    policiesToApply.append(objPol)
+
+        # Apply the policy multipliers to the epidemic factors
+        if len(policiesToApply) > 0:
+            print("before applying: " + str(params))
+            for policy in policiesToApply:
+                params = [a * b for a,b in zip(params, policy.getPolicy()[2:7])]
+                print("after applying: "+ policy.policyName)
+                print(params)
+        
+        print()
+
         self.sol = ode_solver(tspan, initial_conditions, params)
         S, E, I, R, D = self.sol[:, 0], self.sol[:, 1], self.sol[:, 2], self.sol[:, 3], self.sol[:, 4]
         self.S.extend(S[1:].tolist())
@@ -151,6 +175,35 @@ class Cell:
     def getPopulation(self):
         if len(self.N) != 0:
             return self.N[-1]
+
+class Policy:
+    # --- Start member variables ---
+    newId = itertools.count().__next__
+    policyName = ""
+    betaMult = float(0)
+    sigmaMult = float(0)
+    gammaMult = float(0)
+    muMult = float(0)
+    xMult = float(0)
+    defaultAhderence = 0
+
+    # --- End member variables ---
+
+    def __init__(self, name):
+        self.id = Policy.newId()
+        self.policyName = name
+
+    def setPolicyDetails(self, details):
+        self.betaMult, self.sigmaMult, self.gammaMult, self.muMult, self.xMult, self.defaultAhderence = details
+
+    def getPolicy(self):
+        policyDetails = [self.id, self.policyName, self.betaMult, self.sigmaMult, self.gammaMult, self.muMult, self.xMult, self.defaultAhderence]
+        return policyDetails
+
+    def print(self):
+        print("id: " + str(self.id) + "\t" + self.policyName + "\t")
+        print("Policy Details: " + str(self.getPolicy()[2:]))
+        print()
 
 
 def ode_model(z, t, beta, sigma, gamma, mu, x):
@@ -181,6 +234,29 @@ def initApp(data):
     # set the timestep and duration of the simulation
     app.timeStep = data['timestep'] + 1
     app.duration = data['duration']
+
+    # Create policy objects with their speicifed details
+    policyList = data['policies']
+
+    tempIt = 0
+    for policy in policyList:
+        app.policies.append(Policy(policy['name']))
+        policyDetails = [policy['betaMult'], policy['sigmaMult'], policy['gammaMult'], policy['muMult'], policy['xMult'], policy['adherence']]
+        # set the policy details
+        app.policies[tempIt].setPolicyDetails(policyDetails)
+        app.policies[tempIt].print()
+
+        tempIt = tempIt + 1
+
+    if len(app.policies) == len(policyList):
+        if 'status' in response:
+            response['status'] = "Successfully initalised policies\n"
+    else:
+        if 'status' in response:
+            response['status'] += ". Error occured when creating policy objects"
+        else:
+            response['status'] = "Error occured when creating policy objects"
+
     # Set the number of cells, create their objects and set their variables
     app.cellCount = len(data['cells'])
 
@@ -210,18 +286,33 @@ def initApp(data):
     if app.cellCount == len(app.cells):
         response['status'] = "Successfully initalised application instance"
     else:
-        response['status'] = "Error occured when creating cell objects"
+        if 'status' in response:
+            response['status'] = response['status'] + ". Error occured when creating cell objects"
+        else:
+            response['status'] = "Error occured when creating cell objects"
         
     return response
 
 def nextStep(data):
     response = {}
+    allCellPolicies = []
+    if 'cells' in data:
+        allCellPolicies = data['cells']
+
     obj_key = 'timestep'
+    cellPolicies = []
     if obj_key in data:
         print("Custom timestep of %d day(s) provided, using this" % int(data['timestep']))
         customStep = int(data['timestep']) + 1
         for cell in app.cells:
-            cell.updateOutputs(customStep)
+            for currCellPols in allCellPolicies:
+                if cell.name == currCellPols['name']:
+                    cellPolicies = currCellPols['policies']
+                    break
+                else:
+                    cellPolicies = []
+            print(cell.name)
+            cell.updateOutputs(customStep, cellPolicies)
 
         app.time = app.time + (customStep - 1)
         response['status'] = "Sucessfully progressed " + str(customStep-1) +  " day(s)"
@@ -229,7 +320,12 @@ def nextStep(data):
     else:
         print("Using default timestep of %d day(s)" % int(app.timeStep-1))
         for cell in app.cells:
-            cell.updateOutputs(app.timeStep)
+            for currCellPols in allCellPolicies:
+                if cell.name == currCellPols['name']:
+                    cellPolicies = currCellPols['policies']
+                    break
+
+            cell.updateOutputs(app.timeStep, cellPolicies)
 
         app.time = app.time + (app.timeStep - 1)
         response['status'] = "Sucessfully progressed to next step"
@@ -349,10 +445,11 @@ def main():
     
 
     data = {}
-    data['control'] = "getAllCells"
+    data['control'] = "getAppInfo"
 
     getAppInfo(data)
 
+    data['control'] = "getAppInfo"
     # nextStep(data)
     # nextStep(data)
     print(json.dumps(getAllCells(data)))

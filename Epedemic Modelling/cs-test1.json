@@ -2,6 +2,35 @@
     "control": "initApp",
     "timestep": 2,
     "duration": 30,
+    "policies": [
+        {
+            "name": "Face masks",
+            "betaMult": 0.75,
+            "sigmaMult": 1,
+            "gammaMult": 1,
+            "muMult": 1,
+            "xMult": 1,
+            "adherence": 1
+        },
+        {
+            "name": "Medical treatment",
+            "betaMult": 1,
+            "sigmaMult": 1,
+            "gammaMult": 1.25,
+            "muMult": 0.5,
+            "xMult": 1,
+            "adherence": 1
+        },
+        {
+            "name": "Limited/delayed testing",
+            "betaMult": 1,
+            "sigmaMult": 1.5,
+            "gammaMult": 1,
+            "muMult": 1,
+            "xMult": 1,
+            "adherence": 1
+        }
+    ],
     "cells": [
         {
             "name": "SA",
@@ -68,4 +97,41 @@
 
 {
     "control": "reset"
+}
+
+{
+    "control": "nextStep",
+    "timestep": 5,
+    "cells": [
+        {
+            "name": "SA",
+            "policies":[
+                {
+                    "policyId": 0,
+                    "policyName": "Face masks",
+                    "adherence": 1
+                },
+                {
+                    "policyId": 1,
+                    "policyName": "Medical treatment",
+                    "adherence": 1
+                }
+            ]
+        },
+        {
+          "name": "VIC",
+          "policies":[
+                {
+                    "policyId": 0,
+                    "policyName": "Face masks",
+                    "adherence": 1
+                },
+                {
+                    "policyId": 2,
+                    "policyName": "Limited/delayed testing",
+                    "adherence": 1
+                }
+            ]
+        }
+    ]
 }

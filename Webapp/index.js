@@ -106,8 +106,9 @@ app.get("/instructor", function(req, res){
     }
 });
 
-// Setup student Cells
+// Setup student and policy Cells
 var studentCells = [];
+var listPolicies = [];
 
 // Initialise simulation
 app.post("/init", function(req, res){
@@ -117,6 +118,7 @@ app.post("/init", function(req, res){
     setup.timestep = parseInt(req.body.sim.timeStep);
     setup.duration = parseInt(req.body.sim.simulationDays);
     setup.cells = [];
+    setup.policies = [];
 
     for(var i = 0; i < req.body.cells.length; i++){
         var currentCell = new Object();
@@ -142,6 +144,33 @@ app.post("/init", function(req, res){
         student.claimed = false;
         student.studentName = "";
         studentCells.push(student);
+
+        // Setup cell policies
+        var cell = new Object();
+        cell.name = req.body.cells[i].cellName;
+        cell.policies = [];
+        for(var j=0; j < req.body.policies.length; j++){            
+            var policy = new Object();
+            policy.policyName = req.body.policies[j].policyName;
+            policy.policyAvailable = false;
+            policy.policyEnabled = false;
+            policy.policyConform = parseFloat(req.body.policies[j].complianceMultiplier)  + Math.random();
+            cell.policies.push(policy);
+        }
+        listPolicies.push(cell);
+    }
+
+    for(var i = 0; i < req.body.policies.length; i++){
+        var currentPolicy = new Object();
+        currentPolicy.name = req.body.policies[i].policyName;
+        currentPolicy.betaMult = parseFloat(req.body.policies[i].infectionMultiplier);
+        currentPolicy.sigmaMult = parseFloat(req.body.policies[i].incubationMultiplier);
+        currentPolicy.gammaMult = parseFloat(req.body.policies[i].recoveryMultiplier);
+        currentPolicy.muMult = parseFloat(1);
+        currentPolicy.xMult = parseFloat(req.body.policies[i].susceptibilityMultiplier);
+        currentPolicy.adherence = parseFloat(req.body.policies[i].complianceMultiplier);
+
+        setup.policies.push(currentPolicy);
     }
 
     sendCommand({control: "reset"});
@@ -149,6 +178,30 @@ app.post("/init", function(req, res){
     serverInit = true;
     res.redirect("/instructor");
 });
+
+// Policy Availablity Control
+app.post("/policyAvailability", function(req, res){
+    for(var i = 0; i < req.body.data.length; i++){
+        for(var j = 0; j < listPolicies.length; j++){
+            listPolicies[j].policies[i].policyAvailable = (req.body.data[i] == "true");
+            if(listPolicies[j].policies[i].policyAvailable  == false){ listPolicies[j].policies[i].policyEnabled = false; }
+        }
+    }
+    res.send();
+});
+
+// 
+app.post("/policyChanges", function(req, res){
+    for(var i = 0; i < req.body.policies.length; i++){
+        if(listPolicies[req.body.cell].policies[i].policyAvailable){
+            listPolicies[req.body.cell].policies[i].policyEnabled = (req.body.policies[i].enabled == "true");
+        } else {
+            listPolicies[req.body.cell].policies[i].policyEnabled = false;
+        }
+        listPolicies[req.body.cell].policies[i].policyConform = parseFloat(req.body.policies[i].conform);
+    }
+    res.send();
+})
 
 // Generate unique 4 char student access code
 function genAccessCode(){
@@ -176,7 +229,7 @@ app.get("/student/:id", function(req, res){
     if(!found){
         res.redirect("/student?loginerror=fail");
     } else {
-        res.send("Logged In: " + req.params.id );
+        res.sendFile(path.join(__dirname + "/pages/student.html"));
     }
 });
 
@@ -220,6 +273,23 @@ app.post("/student", function(req, res){
     } else {
         res.redirect("/student?loginerror=fail");
     }    
+});
+
+// Student Logoff
+app.post("/student/logoff", function(req, res){
+    console.log("Logoff user: " + req.body.accessCode);
+
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].accessCode == req.body.accessCode){
+            studentCells[i].uuid = "";
+            studentCells[i].claimed = false;
+            studentCells[i].studentName = "";
+            break;
+        }
+    }
+
+    res.status(200);
+    res.send();
 });
 
 // Temp List of student Access Codes
@@ -285,13 +355,32 @@ function sendCommand(input){
 
 // Next Step and Next Step X
 app.get("/nextStep", function(req, res){
-    sendCommand({control: "nextStep"});
+    sendCommand({control: "nextStep", cells: stepPolicies()});
     res.send("Command Sent");
 });
 app.get("/nextStep/:x", function(req, res){
-    sendCommand({control: "nextStep", timestep: req.params.x});
+    sendCommand({control: "nextStep", timestep: req.params.x, cells: stepPolicies()});
     res.send("Command Sent");
 });
+function stepPolicies(){
+    var out = [];
+    for(var i = 0; i < listPolicies.length; i++){
+        var obj = new Object();
+        obj.name = listPolicies[i].name;
+        obj.policies = [];
+        for(var j = 0; j < listPolicies[i].policies.length; j++){
+            if(listPolicies[i].policies[j].policyEnabled){
+                var obj2 = new Object();
+                obj2.policyId = j;
+                obj2.policyName = listPolicies[i].policies[j].policyName;
+                obj2.adherence = listPolicies[i].policies[j].policyConform;
+                obj.policies.push(obj2);
+            }
+        }
+        if(obj.policies.length != 0){out.push(obj);}
+    }
+    return out;
+}
 
 // reset Model
 app.get("/reset", function(req, res){
@@ -303,21 +392,13 @@ function reset(){
     sendCommand({control: "reset"});
     serverInit = false;
     studentCells = [];
+    listPolicies = [];
 }
 
 // Policies return
 app.get("/policies.json", function(req, res){
-    var out = [];
-    for(var i = 0; i < 5; i++){
-        var pol = new Object();
-        pol.policyName = "Mask " + i;
-        pol.policyAvailable = (i % 2 == 0);
-        pol.policyEnabled = (i % 3 == 0);
-        pol.policyConform = Math.random();
-        out.push(pol);
-    }
     res.setHeader("Content-Type", "application/json");
-    res.send(JSON.stringify(out));
+    res.send(JSON.stringify(listPolicies));
 });
 
 
