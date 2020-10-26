@@ -123,11 +123,34 @@ class Cell:
         equationParams = self.beta, self.sigma, self.gamma, self.mu, self.x
         return equationParams
 
-    def updateOutputs(self, step):
+    def updateOutputs(self, step, epiMults):
         # print("Updating outputs for: " + self.name)
         tspan = np.arange(0, step, 1)
         initial_conditions = self.getInitCond()
         params = self.getEquationParams()
+
+        # handle adherence values, current not in use
+        # policyPop = initial_conditions
+        # remainingPop = initial_conditions
+
+        print("Epidemic Multipliers to be applied")
+        print(epiMults)
+        policiesToApply = []
+        for policy in epiMults:
+            for objPol in app.policies:
+                if policy['policyId'] == objPol.id:
+                    policiesToApply.append(objPol)
+
+        # Apply the policy multipliers to the epidemic factors
+        if len(policiesToApply) > 0:
+            print("before applying: " + str(params))
+            for policy in policiesToApply:
+                params = [a * b for a,b in zip(params, policy.getPolicy()[2:7])]
+                print("after applying: "+ policy.policyName)
+                print(params)
+        
+        print()
+
         self.sol = ode_solver(tspan, initial_conditions, params)
         S, E, I, R, D = self.sol[:, 0], self.sol[:, 1], self.sol[:, 2], self.sol[:, 3], self.sol[:, 4]
         self.S.extend(S[1:].tolist())
@@ -272,12 +295,24 @@ def initApp(data):
 
 def nextStep(data):
     response = {}
+    allCellPolicies = []
+    if 'cells' in data:
+        allCellPolicies = data['cells']
+
     obj_key = 'timestep'
+    cellPolicies = []
     if obj_key in data:
         print("Custom timestep of %d day(s) provided, using this" % int(data['timestep']))
         customStep = int(data['timestep']) + 1
         for cell in app.cells:
-            cell.updateOutputs(customStep)
+            for currCellPols in allCellPolicies:
+                if cell.name == currCellPols['name']:
+                    cellPolicies = currCellPols['policies']
+                    break
+                else:
+                    cellPolicies = []
+            print(cell.name)
+            cell.updateOutputs(customStep, cellPolicies)
 
         app.time = app.time + (customStep - 1)
         response['status'] = "Sucessfully progressed " + str(customStep-1) +  " day(s)"
@@ -285,7 +320,12 @@ def nextStep(data):
     else:
         print("Using default timestep of %d day(s)" % int(app.timeStep-1))
         for cell in app.cells:
-            cell.updateOutputs(app.timeStep)
+            for currCellPols in allCellPolicies:
+                if cell.name == currCellPols['name']:
+                    cellPolicies = currCellPols['policies']
+                    break
+
+            cell.updateOutputs(app.timeStep, cellPolicies)
 
         app.time = app.time + (app.timeStep - 1)
         response['status'] = "Sucessfully progressed to next step"
@@ -405,10 +445,11 @@ def main():
     
 
     data = {}
-    data['control'] = "getAllCells"
+    data['control'] = "getAppInfo"
 
     getAppInfo(data)
 
+    data['control'] = "getAppInfo"
     # nextStep(data)
     # nextStep(data)
     print(json.dumps(getAllCells(data)))

@@ -6,20 +6,29 @@
         {
             "name": "Face masks",
             "betaMult": 0.75,
-            "sigmaMult": 0,
-            "gammaMult": 0,
-            "muMult": 0,
-            "xMult": 0,
-            "adherence": 0.3150
+            "sigmaMult": 1,
+            "gammaMult": 1,
+            "muMult": 1,
+            "xMult": 1,
+            "adherence": 1
         },
         {
-            "name": "Lockdown",
-            "betaMult": 0.35,
-            "sigmaMult": 0,
-            "gammaMult": 0,
-            "muMult": 0,
-            "xMult": 0,
-            "adherence": 0.75
+            "name": "Medical treatment",
+            "betaMult": 1,
+            "sigmaMult": 1,
+            "gammaMult": 1.25,
+            "muMult": 0.5,
+            "xMult": 1,
+            "adherence": 1
+        },
+        {
+            "name": "Limited/delayed testing",
+            "betaMult": 1,
+            "sigmaMult": 1.5,
+            "gammaMult": 1,
+            "muMult": 1,
+            "xMult": 1,
+            "adherence": 1
         }
     ],
     "cells": [
@@ -96,31 +105,31 @@
     "cells": [
         {
             "name": "SA",
-            "polilcies":[
+            "policies":[
                 {
                     "policyId": 0,
                     "policyName": "Face masks",
-                    "adherence": 0.30
+                    "adherence": 1
                 },
                 {
                     "policyId": 1,
-                    "policyName": "Social distancing",
-                    "adherence": 0.15
+                    "policyName": "Medical treatment",
+                    "adherence": 1
                 }
             ]
         },
         {
           "name": "VIC",
-          "polilcies":[
+          "policies":[
                 {
                     "policyId": 0,
                     "policyName": "Face masks",
-                    "adherence": 0.30
+                    "adherence": 1
                 },
                 {
                     "policyId": 2,
-                    "policyName": "Lockdown",
-                    "adherence": 0.75
+                    "policyName": "Limited/delayed testing",
+                    "adherence": 1
                 }
             ]
         }
