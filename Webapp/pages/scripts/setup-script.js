@@ -371,22 +371,22 @@ faceMasks.complianceMultiplier = "1";
 faceMasks.deathMultiplier = "1";
 
 var medicalTreatment = new Policy;
-socialDistancing.policyName = "Medical Treatment";
-socialDistancing.infectionMultipler = "1";
-socialDistancing.incubationMultiplier = "1";
-socialDistancing.recoveryMultiplier = "1.25";
-socialDistancing.susceptibilityMultiplier = "1";
-socialDistancing.complianceMultiplier = "1";
-socialDistancing.deathMultiplier = "0.5";
+medicalTreatment.policyName = "Medical Treatment";
+medicalTreatment.infectionMultipler = "1";
+medicalTreatment.incubationMultiplier = "1";
+medicalTreatment.recoveryMultiplier = "1.25";
+medicalTreatment.susceptibilityMultiplier = "1";
+medicalTreatment.complianceMultiplier = "1";
+medicalTreatment.deathMultiplier = "0.5";
 
 var limitedTesting = new Policy;
-lockDown.policyName = "Limited Testing";
-lockDown.infectionMultipler = "1";
-lockDown.incubationMultiplier = "1.5";
-lockDown.recoveryMultiplier = "1";
-lockDown.susceptibilityMultiplier = "1";
-lockDown.complianceMultiplier = "1";
-lockDown.deathMultiplier = "1";
+limitedTesting.policyName = "Limited Testing";
+limitedTesting.infectionMultipler = "1";
+limitedTesting.incubationMultiplier = "1.5";
+limitedTesting.recoveryMultiplier = "1";
+limitedTesting.susceptibilityMultiplier = "1";
+limitedTesting.complianceMultiplier = "1";
+limitedTesting.deathMultiplier = "1";
 
 
 
