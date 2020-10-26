@@ -263,7 +263,7 @@ def initApp(data):
     if app.cellCount == len(app.cells):
         response['status'] = "Successfully initalised application instance"
     else:
-        if response['status'] != "":
+        if 'status' in response:
             response['status'] = response['status'] + ". Error occured when creating cell objects"
         else:
             response['status'] = "Error occured when creating cell objects"
