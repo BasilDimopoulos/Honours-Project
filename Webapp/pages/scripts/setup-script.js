@@ -363,26 +363,26 @@ function cellPreset(cellArray){
 
 var faceMasks = new Policy;
 faceMasks.policyName = "Face Masks";
-faceMasks.infectionMultipler = "0.80";
+faceMasks.infectionMultipler = "0.75";
 faceMasks.incubationMultiplier = "1";
 faceMasks.recoveryMultiplier = "1";
 faceMasks.susceptibilityMultiplier = "1";
 faceMasks.complianceMultiplier = "1";
 faceMasks.deathMultiplier = "1";
 
-var socialDistancing = new Policy;
-socialDistancing.policyName = "Social Distancing";
-socialDistancing.infectionMultipler = "0.60";
+var medicalTreatment = new Policy;
+socialDistancing.policyName = "Medical Treatment";
+socialDistancing.infectionMultipler = "1";
 socialDistancing.incubationMultiplier = "1";
-socialDistancing.recoveryMultiplier = "1";
+socialDistancing.recoveryMultiplier = "1.25";
 socialDistancing.susceptibilityMultiplier = "1";
 socialDistancing.complianceMultiplier = "1";
-socialDistancing.deathMultiplier = "1";
+socialDistancing.deathMultiplier = "0.5";
 
-var lockDown = new Policy;
-lockDown.policyName = "Lock Down";
-lockDown.infectionMultipler = "0.50";
-lockDown.incubationMultiplier = "1";
+var limitedTesting = new Policy;
+lockDown.policyName = "Limited Testing";
+lockDown.infectionMultipler = "1";
+lockDown.incubationMultiplier = "1.5";
 lockDown.recoveryMultiplier = "1";
 lockDown.susceptibilityMultiplier = "1";
 lockDown.complianceMultiplier = "1";
