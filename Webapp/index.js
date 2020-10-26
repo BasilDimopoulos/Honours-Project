@@ -90,7 +90,7 @@ var contentstate = [new Date, { status: "notset" }];
 
 // Index Route
 app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname + "/pages/root.html"));
+    res.redirect("/student");
 });
 
 app.get('/load', function(req, res){
@@ -98,6 +98,7 @@ app.get('/load', function(req, res){
 });
 
 app.get("/instructor", function(req, res){
+    res.set("Cache-Control", "no-store");
     if(serverInit){
         res.sendFile(path.join(__dirname + "/pages/instructor.html"));
     } else {
@@ -105,6 +106,10 @@ app.get("/instructor", function(req, res){
     }
 });
 
+// Setup student Cells
+var studentCells = [];
+
+// Initialise simulation
 app.post("/init", function(req, res){
 
     var setup = new Object();
@@ -129,22 +134,116 @@ app.post("/init", function(req, res){
         currentCell.x = parseFloat(req.body.cells[i].returnToSusceptibility);
         
         setup.cells.push(currentCell);
+
+        // Generate Student Cells
+        var student = new Object();
+        student.cellName = req.body.cells[i].cellName;
+        student.accessCode = genAccessCode();
+        student.claimed = false;
+        student.studentName = "";
+        studentCells.push(student);
     }
-    
+
     sendCommand({control: "reset"});
     sendCommand(setup);
     serverInit = true;
     res.redirect("/instructor");
 });
 
+// Generate unique 4 char student access code
+function genAccessCode(){
+    while(true){
+        var accessCode = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 4).toUpperCase();
+        var found = false;
+        for(var i = 0; i < studentCells.length; i++){
+            if(accessCode == studentCells[i].accessCode) found = true;
+        }
+        if(!found) return accessCode;
+    }
+}
+
+// Student Session
+app.get("/student/:id", function(req, res){
+    res.set("Cache-Control", "no-store");
+    var found = false;
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].uuid == req.session.id && studentCells[i].accessCode == req.params.id){
+            found = true;
+            break;
+        }
+    }
+    
+    if(!found){
+        res.redirect("/student?loginerror=fail");
+    } else {
+        res.send("Logged In: " + req.params.id );
+    }
+});
+
+// Student Login Handler
+app.get("/student", function(req, res){
+    res.set("Cache-Control", "no-store");
+    var found = false;
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].uuid == req.session.id){
+            res.redirect("/student/" + studentCells[i].accessCode);
+            found = true;
+            break;
+        }
+    }    
+    if(!found){
+        res.sendFile(path.join(__dirname + "/pages/student-login.html"));
+    }
+});
+
+// Student Login Request Handler
+app.post("/student", function(req, res){
+    res.set("Cache-Control", "no-store");
+
+    var found = false;
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].accessCode == req.body.inputCode){
+            if (studentCells[i].claimed){
+                break;
+            } else {
+                found = true;
+                studentCells[i].studentName = req.body.inputName;
+                studentCells[i].claimed = true;
+                studentCells[i].uuid = req.session.id;
+                break;
+            }
+        }
+    }
+
+    if(found){
+        res.redirect("/student/" + req.body.inputCode);
+    } else {
+        res.redirect("/student?loginerror=fail");
+    }    
+});
+
+// Temp List of student Access Codes
+app.get("/accessCodes", function(req, res){
+    var output = "";
+    for(var i = 0; i < studentCells.length; i++){
+        output += "<strong>" + studentCells[i].cellName + ":</strong> " + studentCells[i].accessCode;
+        if(studentCells[i].claimed) output += " - Claimed By: " + studentCells[i].studentName;
+        output += "<br />"
+    }
+    if(studentCells.length == 0) output = "No codes assigned";
+    res.send(output);
+});
+
+app.get("/accessCodes.json", function(req, res){
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify(studentCells));
+});
 
 app.use("/scripts", express.static("pages/scripts"));
 app.use("/stylesheets", express.static("pages/stylesheets"));
 app.use("/images", express.static("pages/images"));
 
-app.get("/student", function(req, res){
-    res.send("Student View Goes Here");
-});
+
 
 
 // TESTING function calls between python model and nodejs
@@ -196,10 +295,30 @@ app.get("/nextStep/:x", function(req, res){
 
 // reset Model
 app.get("/reset", function(req, res){
-    sendCommand({control: "reset"});
-    serverInit = false;
+    reset();
     res.send("Command Sent");
 })
+
+function reset(){
+    sendCommand({control: "reset"});
+    serverInit = false;
+    studentCells = [];
+}
+
+// Policies return
+app.get("/policies.json", function(req, res){
+    var out = [];
+    for(var i = 0; i < 5; i++){
+        var pol = new Object();
+        pol.policyName = "Mask " + i;
+        pol.policyAvailable = (i % 2 == 0);
+        pol.policyEnabled = (i % 3 == 0);
+        pol.policyConform = Math.random();
+        out.push(pol);
+    }
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify(out));
+});
 
 
 // 404 error handler
