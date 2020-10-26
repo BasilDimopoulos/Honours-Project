@@ -2,6 +2,26 @@
     "control": "initApp",
     "timestep": 2,
     "duration": 30,
+    "policies": [
+        {
+            "name": "Face masks",
+            "betaMult": 0.75,
+            "sigmaMult": 0,
+            "gammaMult": 0,
+            "muMult": 0,
+            "xMult": 0,
+            "adherence": 0.3150
+        },
+        {
+            "name": "Lockdown",
+            "betaMult": 0.35,
+            "sigmaMult": 0,
+            "gammaMult": 0,
+            "muMult": 0,
+            "xMult": 0,
+            "adherence": 0.75
+        }
+    ],
     "cells": [
         {
             "name": "SA",
@@ -68,4 +88,41 @@
 
 {
     "control": "reset"
+}
+
+{
+    "control": "nextStep",
+    "timestep": 5,
+    "cells": [
+        {
+            "name": "SA",
+            "polilcies":[
+                {
+                    "policyId": 0,
+                    "policyName": "Face masks",
+                    "adherence": 0.30
+                },
+                {
+                    "policyId": 1,
+                    "policyName": "Social distancing",
+                    "adherence": 0.15
+                }
+            ]
+        },
+        {
+          "name": "VIC",
+          "polilcies":[
+                {
+                    "policyId": 0,
+                    "policyName": "Face masks",
+                    "adherence": 0.30
+                },
+                {
+                    "policyId": 2,
+                    "policyName": "Lockdown",
+                    "adherence": 0.75
+                }
+            ]
+        }
+    ]
 }
