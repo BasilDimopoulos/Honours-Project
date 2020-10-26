@@ -185,11 +185,11 @@ $( window ).resize(function(){
 function updateDisplayValues(cell){
     $("#display_time").text(cellcont[0]["susceptibles"].length - 1);
     $("#display_P").text(cellcont[cell]["population"]);
-    $("#display_S").text(cellcont[cell]["susceptibles"].slice(-1)[0].toFixed(4));
-    $("#display_E").text(cellcont[cell]["exposed"].slice(-1)[0].toFixed(4));
-    $("#display_I").text(cellcont[cell]["infected"].slice(-1)[0].toFixed(4));
-    $("#display_R").text(cellcont[cell]["recovered"].slice(-1)[0].toFixed(4));
-    $("#display_D").text(cellcont[cell]["deaths"].slice(-1)[0].toFixed(4));
+    $("#display_S").text(cellcont[cell]["susceptibles"].slice(-1)[0].toFixed(0));
+    $("#display_E").text(cellcont[cell]["exposed"].slice(-1)[0].toFixed(0));
+    $("#display_I").text(cellcont[cell]["infected"].slice(-1)[0].toFixed(0));
+    $("#display_R").text(cellcont[cell]["recovered"].slice(-1)[0].toFixed(0));
+    $("#display_D").text(cellcont[cell]["deaths"].slice(-1)[0].toFixed(0));
 }
 
 function updateHidden(){

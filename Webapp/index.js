@@ -229,7 +229,7 @@ app.get("/student/:id", function(req, res){
     if(!found){
         res.redirect("/student?loginerror=fail");
     } else {
-        res.send("Logged In: " + req.params.id );
+        res.sendFile(path.join(__dirname + "/pages/student.html"));
     }
 });
 
