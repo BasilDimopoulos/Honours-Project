@@ -355,13 +355,32 @@ function sendCommand(input){
 
 // Next Step and Next Step X
 app.get("/nextStep", function(req, res){
-    sendCommand({control: "nextStep"});
+    sendCommand({control: "nextStep", cells: stepPolicies()});
     res.send("Command Sent");
 });
 app.get("/nextStep/:x", function(req, res){
-    sendCommand({control: "nextStep", timestep: req.params.x});
+    sendCommand({control: "nextStep", timestep: req.params.x, cells: stepPolicies()});
     res.send("Command Sent");
 });
+function stepPolicies(){
+    var out = [];
+    for(var i = 0; i < listPolicies.length; i++){
+        var obj = new Object();
+        obj.name = listPolicies[i].name;
+        obj.policies = [];
+        for(var j = 0; j < listPolicies[i].policies.length; j++){
+            if(listPolicies[i].policies[j].policyEnabled){
+                var obj2 = new Object();
+                obj2.policyId = j;
+                obj2.policyName = listPolicies[i].policies[j].policyName;
+                obj2.adherence = listPolicies[i].policies[j].policyConform;
+                obj.policies.push(obj2);
+            }
+        }
+        if(obj.policies.length != 0){out.push(obj);}
+    }
+    return out;
+}
 
 // reset Model
 app.get("/reset", function(req, res){
