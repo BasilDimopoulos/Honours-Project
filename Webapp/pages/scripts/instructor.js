@@ -2,25 +2,41 @@
 // Student access codes 
 $(document).ready(function(){
     $("#accessCodes").click(function(){
-        var output = "";
-        $.get("/accessCodes.json", function(data){
-            $.each(data, function(i, key){
-                output += "<p><strong>"; 
-                output += key.cellName;
-                output += ":</strong> ";
-                output += key.accessCode;
-                if(key.claimed) {
-                    output += " - Claimed by: ";
-                    output += key.studentName; 
-                }
-                output += "</p>"
-            });
-        }).done(function(){
-            $("#accessCodesList").html(output);
-        });
+        updateAccessCodes();
     });
     displayPolicies();
 });
+
+// Update Access Codes
+function updateAccessCodes(){
+    // console.log("Hidden: " + $("#ModalCenterCont").is("aria-hidden"));
+        
+    var output = "";
+    $.get("/accessCodes.json", function(data){
+        $.each(data, function(i, key){
+            output += "<p><strong>"; 
+            output += key.cellName;
+            output += ":</strong> ";
+            output += key.accessCode;
+            if(key.claimed) {
+                output += " - Claimed by: ";
+                output += key.studentName; 
+                output += "<button type='button' onclick='removeStudent("+'"'+key.accessCode+'"'+")' style='margin-top: -6px' class='float-right btn btn-secondary'>Remove</button>";
+            }
+            output += "</p><hr />";
+        });
+    }).done(function(){
+        $("#accessCodesList").html(output);
+    });
+}
+
+// Post student to be disconnected
+function removeStudent(id){
+    console.log("Remove user: " + id);
+    $.post("/student/logoff", { accessCode: id }).done(function(){
+        updateAccessCodes();
+    });
+}
 
 
 // Display Policies

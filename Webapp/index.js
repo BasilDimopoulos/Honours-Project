@@ -222,6 +222,23 @@ app.post("/student", function(req, res){
     }    
 });
 
+// Student Logoff
+app.post("/student/logoff", function(req, res){
+    console.log("Logoff user: " + req.body.accessCode);
+
+    for(var i = 0; i < studentCells.length; i++){
+        if(studentCells[i].accessCode == req.body.accessCode){
+            studentCells[i].uuid = "";
+            studentCells[i].claimed = false;
+            studentCells[i].studentName = "";
+            break;
+        }
+    }
+
+    res.status(200);
+    res.send();
+});
+
 // Temp List of student Access Codes
 app.get("/accessCodes", function(req, res){
     var output = "";
