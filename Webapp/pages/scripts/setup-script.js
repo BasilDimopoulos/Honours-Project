@@ -312,7 +312,7 @@ function australiaPreset(){
   cellArr[3].initalR = 0;
   cellArr[3].initalD = 0;
 
-  cellArr[4].cellName = "QUE";
+  cellArr[4].cellName = "QLD";
   cellArr[4].population = 5071000;
   cellArr[4].initalI = 1;
   cellArr[4].initalE = 0;

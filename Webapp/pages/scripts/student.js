@@ -46,13 +46,10 @@ function removeStudent(id){
 function displayPolicies(){
     $.get("/accessCodes.json", function(access){
         var urlCode = $(location).attr('href').substr(-4);
-        console.log("ACCESS CODE: " + urlCode);
         var controlCell = -1;
         $.each(access, function(j, val){
             if(urlCode == val.accessCode){ controlCell = j; }
         });
-
-        console.log("Control Cell: " + controlCell);
         
         var output = "";
         $.get("/policies.json", function(data){
@@ -123,6 +120,11 @@ function policyChanges(){
         });
     });
 };
+
+// Logoff
+function logoff(){
+    removeStudent($(location).attr('href').substr(-4));
+}
 
 // Post policy changes
 function postPolicyChanges(){
