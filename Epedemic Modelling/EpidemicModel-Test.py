@@ -25,24 +25,26 @@ class TESTING(unittest.TestCase):
         self.assertEqual(EM.app.timeStep, 2)
 
     # Test 4 - Test Setters Update, Outputs and Get outputs
-    # def test_EM004(self):
-    #     c1 = EM.Cell("Adelaide")
-    #     c1.setInitCond([1,27,0,0,500])
-    #     c1.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
-    #     EM.app.timeStep = 2
-    #     c1.updateOutputs(EM.app.timeStep)
-    #     correctOutput = [472.0, 451.71881842639687], [1.0, 19.61676947322724], [27.0, 20.901963282821953], [0.0, 7.527802888432526], [0.0, 0.23464592912168014]
-    #     self.assertEqual(c1.getOutputs(), correctOutput)
+    def test_EM004(self):
+        c1 = EM.Cell("Adelaide")
+        c1.setInitCond([1,27,0,0,500])
+        c1.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
+        EM.app.timeStep = 2
+        epiMults = []
+        c1.updateOutputs(EM.app.timeStep, epiMults)
+        correctOutput = [472.0, 451.71881842639687], [1.0, 19.61676947322724], [27.0, 20.901963282821953], [0.0, 7.527802888432526], [0.0, 0.23464592912168014]
+        self.assertEqual(c1.getOutputs(), correctOutput)
 
     # Test 5 - Test updating outputs over for time steps > 1 day
-    # def test_EM005(self):
-    #     c1 = EM.Cell("Adelaide")
-    #     c1.setInitCond([1,27,0,0,500])
-    #     c1.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
-    #     EM.app.timeStep = 5
-    #     correctOutput = [472.0, 451.71881842639687, 436.30679727540706, 422.6331932346779, 409.23084512205855], [1.0, 19.61676947322724, 31.30727972496371, 39.9467376907329, 47.335268744761336], [27.0, 20.901963282821953, 19.06551433321007, 19.43838776478204, 21.02641747313808], [0.0, 7.527802888432526, 12.888397170219887, 17.358470622231636, 21.58269134959251], [0.0, 0.23464592912168014, 0.4320114961995488, 0.6232106875758036, 0.8247773104497161]
-    #     c1.updateOutputs(EM.app.timeStep)
-    #     self.assertEqual(c1.getOutputs(), correctOutput)
+    def test_EM005(self):
+        c1 = EM.Cell("Adelaide")
+        c1.setInitCond([1,27,0,0,500])
+        c1.setEquationParams([2.79*(1/2.9), 0.2, 1/2.9, 0.01, 0.14])
+        EM.app.timeStep = 5
+        correctOutput = [472.0, 451.71881842639687, 436.30679727540706, 422.6331932346779, 409.23084512205855], [1.0, 19.61676947322724, 31.30727972496371, 39.9467376907329, 47.335268744761336], [27.0, 20.901963282821953, 19.06551433321007, 19.43838776478204, 21.02641747313808], [0.0, 7.527802888432526, 12.888397170219887, 17.358470622231636, 21.58269134959251], [0.0, 0.23464592912168014, 0.4320114961995488, 0.6232106875758036, 0.8247773104497161]
+        epiMults = []
+        c1.updateOutputs(EM.app.timeStep, epiMults)
+        self.assertEqual(c1.getOutputs(), correctOutput)
 
     # Test 6 - Test getAllCells function to ensure the data is being returned in the correct format
     def test_EM006(self):
