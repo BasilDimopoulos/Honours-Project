@@ -44,36 +44,40 @@ function removeStudent(id){
 
 // Display Policies
 function displayPolicies(){
-    $.get("/accessCodes.json", function(access){
-        var urlCode = $(location).attr('href').substr(-4);
-        var controlCell = -1;
-        $.each(access, function(j, val){
-            if(urlCode == val.accessCode){ controlCell = j; }
-        });
-        
-        var output = "";
-        $.get("/policies.json", function(data){
-            $.each(data[lastMain].policies, function(i, key){
-                output += '<div class="form-group form-inline col-sm-6 ml-3 p-0">';
-                output += '<label for="policy-'+ i +'">' + key.policyName + ': </label>'
-                output += '<input type="checkbox" class="pol-cont form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'"';
-                if(!key.policyAvailable || controlCell != lastMain) output += ' disabled="disabled"';
-                if(key.policyEnabled) output += ' checked="true"';        
-                output += '>'
-                output += '</div><div class="mt-2 col-sm-4">'
-                output += '<input style="margin-top: .5vh; text-align: right;" type="number" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
-                if(!key.policyAvailable || controlCell != lastMain) output += ' disabled="disabled"';        
-                output += '>'
-                output += '</div>'
-                output += '<div class="w-100"><hr /></div>';
+    if(lastMain == 0){
+        $("#policy-controls").html("<h5 class='ml-4'>All (Combined Cells)</h5>");
+    } else {    
+        $.get("/accessCodes.json", function(access){
+            var urlCode = $(location).attr('href').substr(-4);
+            var controlCell = -1;
+            $.each(access, function(j, val){
+                if(urlCode == val.accessCode){ controlCell = j + 1; }
             });
-            output += '<div class="w-100"></div>';
-            output += '<div><button class="m-3 btn btn-primary" id="policy-update-btn" disabled="disabled" onclick="postPolicyChanges()">Update</button></div>';
-        }).done(function(){
-            $("#policy-controls").html(output);
-            policyChanges();
+            
+            var output = "";
+            $.get("/policies.json", function(data){
+                $.each(data[lastMain].policies, function(i, key){
+                    output += '<div class="form-group form-inline col-sm-6 ml-3 p-0">';
+                    output += '<label for="policy-'+ i +'">' + key.policyName + ': </label>'
+                    output += '<input type="checkbox" class="pol-cont form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'"';
+                    if(!key.policyAvailable || controlCell != lastMain) output += ' disabled="disabled"';
+                    if(key.policyEnabled) output += ' checked="true"';        
+                    output += '>'
+                    output += '</div><div class="mt-2 col-sm-4">'
+                    output += '<input style="margin-top: .5vh; text-align: right;" type="number" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
+                    if(!key.policyAvailable || controlCell != lastMain) output += ' disabled="disabled"';        
+                    output += '>'
+                    output += '</div>'
+                    output += '<div class="w-100"><hr /></div>';
+                });
+                output += '<div class="w-100"></div>';
+                output += '<div><button class="m-3 btn btn-primary" id="policy-update-btn" disabled="disabled" onclick="postPolicyChanges()">Update</button></div>';
+            }).done(function(){
+                $("#policy-controls").html(output);
+                policyChanges();
+            });
         });
-    });
+    }
 }
     
 
