@@ -48,7 +48,7 @@ function displayPolicies(){
         var urlCode = $(location).attr('href').substr(-4);
         var controlCell = -1;
         $.each(access, function(j, val){
-            if(urlCode == val.accessCode){ controlCell = j + 1; }
+            if(urlCode == val.accessCode){ controlCell = j; }
         });
         
         var output = "";
