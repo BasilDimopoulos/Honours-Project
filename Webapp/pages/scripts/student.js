@@ -56,6 +56,7 @@ function displayPolicies(){
             if(lastMain == data.length) { 
                 output = ("<h5 class='ml-4'>All (Combined Cells)</h5>"); 
             } else {
+                output += '<div class="form-group form-inline col-sm-6 ml-3 p-0"><h5>' + cellcont[lastMain]["name"] + "</h5></div>";
                 $.each(data[lastMain].policies, function(i, key){
                     output += '<div class="form-group form-inline col-sm-6 ml-3 p-0">';
                     output += '<label for="policy-'+ i +'">' + key.policyName + ': </label>'
