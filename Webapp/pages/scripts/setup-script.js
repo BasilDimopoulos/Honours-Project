@@ -38,7 +38,7 @@ class Cell{
 class Policy{
   constructor(){
     var policyName = "Name";
-    var infectionMultipler = 0.0;
+    var infectionMultiplier = 0.0;
     var incubationMultiplier = 0.0;
     var recoveryMultiplier = 0.0;
     var susceptibilityMultiplier = 0.0;
@@ -85,6 +85,7 @@ window.onclick = function(event) {
 //
 
 nextBtnFirst.addEventListener("click", function(event){
+  if(checkPageOne() == true){
   getPageOneData();
   if(simulation.numberOfCells > 0){
   event.preventDefault();
@@ -112,25 +113,30 @@ nextBtnFirst.addEventListener("click", function(event){
 }else{
   alert("Please enter valid input");
 }
+}
 });
 nextBtnSec.addEventListener("click", function(event){
+  if(checkPageTwo() == true){
   event.preventDefault();
   slidePage.style.marginLeft = "-50%";
   bullet[current - 1].classList.add("active");
   progressCheck[current - 1].classList.add("active");
   progressText[current - 1].classList.add("active");
   current += 1;
+  }
 });
 nextBtnThird.addEventListener("click", function(event){
+  if(checkPageThree()== true){
   event.preventDefault();
   slidePage.style.marginLeft = "-75%";
   bullet[current - 1].classList.add("active");
   progressCheck[current - 1].classList.add("active");
   progressText[current - 1].classList.add("active");
   current += 1;
+}
 
-  var confirmation = prepareData();
-  console.log(confirmation);
+  // var confirmation = prepareData();
+  // console.log(confirmation);
 });
 
 function prepareData(){
@@ -239,6 +245,7 @@ function getPageOneData(){
   simulation.simulationDays = $(".simulationDays").val();
   simulation.timeStep = $(".timeStep").val();
   simulation.numberOfCells = $(".CellNumber").val();
+
 }
 
 function getPageTwoData(){
@@ -261,7 +268,7 @@ function getPageThreeData(){
   for(var i = 0; i < numberofPolicies; i ++){
     policies.push(new Policy);
     policies[i].policyName = $(".policy-name")[i].value;
-    policies[i].infectionMultipler = $(".infection-multiplier")[i].value;
+    policies[i].infectionMultiplier = $(".infection-multiplier")[i].value;
     policies[i].incubationMultiplier = $(".incubation-multiplier")[i].value;
     policies[i].recoveryMultiplier = $(".recovery-multiplier")[i].value;
     policies[i].susceptibilityMultiplier = $(".susceptibility-multiplier")[i].value;
@@ -312,7 +319,7 @@ function australiaPreset(){
   cellArr[3].initalR = 0;
   cellArr[3].initalD = 0;
 
-  cellArr[4].cellName = "QUE";
+  cellArr[4].cellName = "QLD";
   cellArr[4].population = 5071000;
   cellArr[4].initalI = 1;
   cellArr[4].initalE = 0;
@@ -363,30 +370,30 @@ function cellPreset(cellArray){
 
 var faceMasks = new Policy;
 faceMasks.policyName = "Face Masks";
-faceMasks.infectionMultipler = "0.80";
+faceMasks.infectionMultipler = "0.75";
 faceMasks.incubationMultiplier = "1";
 faceMasks.recoveryMultiplier = "1";
 faceMasks.susceptibilityMultiplier = "1";
 faceMasks.complianceMultiplier = "1";
 faceMasks.deathMultiplier = "1";
 
-var socialDistancing = new Policy;
-socialDistancing.policyName = "Social Distancing";
-socialDistancing.infectionMultipler = "0.60";
-socialDistancing.incubationMultiplier = "1";
-socialDistancing.recoveryMultiplier = "1";
-socialDistancing.susceptibilityMultiplier = "1";
-socialDistancing.complianceMultiplier = "1";
-socialDistancing.deathMultiplier = "1";
+var medicalTreatment = new Policy;
+medicalTreatment.policyName = "Medical Treatment";
+medicalTreatment.infectionMultipler = "1";
+medicalTreatment.incubationMultiplier = "1";
+medicalTreatment.recoveryMultiplier = "1.25";
+medicalTreatment.susceptibilityMultiplier = "1";
+medicalTreatment.complianceMultiplier = "1";
+medicalTreatment.deathMultiplier = "0.5";
 
-var lockDown = new Policy;
-lockDown.policyName = "Lock Down";
-lockDown.infectionMultipler = "0.50";
-lockDown.incubationMultiplier = "1";
-lockDown.recoveryMultiplier = "1";
-lockDown.susceptibilityMultiplier = "1";
-lockDown.complianceMultiplier = "1";
-lockDown.deathMultiplier = "1";
+var limitedTesting = new Policy;
+limitedTesting.policyName = "Limited Testing";
+limitedTesting.infectionMultipler = "1";
+limitedTesting.incubationMultiplier = "1.5";
+limitedTesting.recoveryMultiplier = "1";
+limitedTesting.susceptibilityMultiplier = "1";
+limitedTesting.complianceMultiplier = "1";
+limitedTesting.deathMultiplier = "1";
 
 
 
@@ -401,4 +408,47 @@ function policyPreset(pol){
     $(".susceptibility-multiplier")[positions].value = pol.susceptibilityMultiplier;
     $(".compliance-multiplier")[positions].value = pol.complianceMultiplier;
     $(".death-multiplier")[positions].value = pol.deathMultiplier;
+}
+
+function replacingPlaceholders(){
+  var holder = $(".cellName");
+  for(var i = 0; i < holder.length; i++){
+    holder[i].placeholder = "Cell " + (i+1);
+  }
+}
+
+function checkPageOne(){
+  var inputs = $(".pageOne");
+
+  for(var i = 0; i < inputs.length; i++){
+  if (!inputs[i].value) {
+    alert("Please fill out all fields");
+    return false;
+    }
+  }
+  return true;
+}
+
+function checkPageTwo(){
+  var inputs = $(".pageTwo");
+
+  for(var i = 0; i < inputs.length; i++){
+  if (!inputs[i].value) {
+    alert("Please fill out all fields");
+    return false;
+    }
+  }
+  return true;
+}
+
+function checkPageThree(){
+  var inputs = $(".pageThree");
+
+  for(var i = 0; i < inputs.length; i++){
+  if (!inputs[i].value) {
+    alert("Please fill out all fields");
+    return false;
+    }
+  }
+  return true;
 }
