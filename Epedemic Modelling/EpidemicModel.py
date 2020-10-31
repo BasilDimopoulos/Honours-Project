@@ -7,13 +7,14 @@ import sys
 import time
 from datetime import datetime
 import json.decoder
+from operator import add
 
 
 class Application:
     # --- Instance Members ---
     cellCount = 0
     initAt = datetime.today()
-    # list of all cells
+    combinedCells = None
     
     # number of days to calulate epidemic functions over, default 2 (= 1 day)
     timeStep = 2
@@ -26,9 +27,19 @@ class Application:
 
     def __init__(self):
         self.initAt = datetime.now()
+        # list of all cells
         self.cells = []
+        # list of all policies initialised in the exercise setup
         self.policies = []
-
+        
+    # Return the cell representing the combination of all cells.
+    def getCombined(self):
+        combinedCell = app.combinedCells
+        if type(app.combinedCells) != type(None):
+            if combinedCell.name == "All (Combined cells)":
+                return combinedCell
+        else: 
+            return None
         
 
 app = Application()
@@ -91,6 +102,7 @@ class Cell:
         print("Pop: " + str(self.N))
         print()
 
+    # Set the 
     def setInitCond(self, initConditions):
         if len(initConditions) != 5:
             sys.exit("Invalid list of input conditions")
@@ -133,23 +145,24 @@ class Cell:
         # policyPop = initial_conditions
         # remainingPop = initial_conditions
 
-        print("Epidemic Multipliers to be applied")
-        print(epiMults)
-        policiesToApply = []
-        for policy in epiMults:
-            for objPol in app.policies:
-                if policy['policyId'] == objPol.id:
-                    policiesToApply.append(objPol)
+        if len(epiMults) > 0:
+            print("Epidemic Multipliers to be applied")
+            print(epiMults)
+            policiesToApply = []
+            for policy in epiMults:
+                for objPol in app.policies:
+                    if policy['policyId'] == objPol.id:
+                        policiesToApply.append(objPol)
 
-        # Apply the policy multipliers to the epidemic factors
-        if len(policiesToApply) > 0:
-            print("before applying: " + str(params))
-            for policy in policiesToApply:
-                params = [a * b for a,b in zip(params, policy.getPolicy()[2:7])]
-                print("after applying: "+ policy.policyName)
-                print(params)
-        
-        print()
+            # Apply the policy multipliers to the epidemic factors
+            if len(policiesToApply) > 0:
+                print("before applying: " + str(params))
+                for policy in policiesToApply:
+                    params = [a * b for a,b in zip(params, policy.getPolicy()[2:7])]
+                    print("after applying: "+ policy.policyName)
+                    print(params)
+            
+            print()
 
         self.sol = ode_solver(tspan, initial_conditions, params)
         S, E, I, R, D = self.sol[:, 0], self.sol[:, 1], self.sol[:, 2], self.sol[:, 3], self.sol[:, 4]
@@ -261,7 +274,6 @@ def initApp(data):
     app.cellCount = len(data['cells'])
 
     cellsList = data['cells']
-
     tempIt = 0
     for cell in cellsList:
         app.cells.append(Cell(cell['name']))
@@ -277,9 +289,27 @@ def initApp(data):
 
         tempIt = tempIt + 1
 
+    # app.cells.append(Cell("All (Combined cells)"))
+    app.combinedCells = Cell("All (Combined cells)")
+    initCombined = [0,0,0,0,0]
+    app.combinedCells.setInitCond(initCombined)
+    # app.cellCount = app.cellCount + 1
+
+    # Element wise summation all other cells
+    for cell in app.cells:
+        app.combinedCells.S = list(map(add, app.combinedCells.S, cell.S))
+        app.combinedCells.E = list(map(add, app.combinedCells.E, cell.E))
+        app.combinedCells.I = list(map(add, app.combinedCells.I, cell.I))
+        app.combinedCells.R = list(map(add, app.combinedCells.R, cell.R))
+        app.combinedCells.D = list(map(add, app.combinedCells.D, cell.D))
+        app.combinedCells.N = list(map(add, app.combinedCells.N, cell.N))
+
+    # print(str(app.combinedCells.name))
+    app.combinedCells.print()
+
     app.initAt = datetime.now()
 
-    print("Created %d cells" % app.cellCount)
+    print("Created %d cells" % (len(app.cells) + 1))
     print("Time step: %d" % app.timeStep)
     print("Duration: %d" % app.duration)
 
@@ -305,6 +335,7 @@ def nextStep(data):
         print("Custom timestep of %d day(s) provided, using this" % int(data['timestep']))
         customStep = int(data['timestep']) + 1
         for cell in app.cells:
+            cellPolicies = []
             for currCellPols in allCellPolicies:
                 if cell.name == currCellPols['name']:
                     cellPolicies = currCellPols['policies']
@@ -319,17 +350,52 @@ def nextStep(data):
 
     else:
         print("Using default timestep of %d day(s)" % int(app.timeStep-1))
+        customStep = app.timeStep
         for cell in app.cells:
+            cellPolicies = []
             for currCellPols in allCellPolicies:
                 if cell.name == currCellPols['name']:
                     cellPolicies = currCellPols['policies']
                     break
-
+            print(cell.name)
             cell.updateOutputs(app.timeStep, cellPolicies)
 
         app.time = app.time + (app.timeStep - 1)
         response['status'] = "Sucessfully progressed to next step"
 
+    # Update combined cell
+    tempS = []
+    tempE = []
+    tempI = []
+    tempR = []
+    tempD = []
+    tempN = []
+    tempIt = 0
+    for cell in app.cells:
+        if tempIt == 0:
+            tempS = cell.S
+            tempE = cell.E
+            tempI = cell.I
+            tempR = cell.R
+            tempD = cell.D
+            tempN = cell.N
+        else:
+            tempS = list(map(add, cell.S[-(customStep-1):], tempS[-(customStep-1):]))
+            tempE = list(map(add, cell.E[-(customStep-1):], tempE[-(customStep-1):]))
+            tempI = list(map(add, cell.I[-(customStep-1):], tempI[-(customStep-1):]))
+            tempR = list(map(add, cell.R[-(customStep-1):], tempR[-(customStep-1):]))
+            tempD = list(map(add, cell.D[-(customStep-1):], tempD[-(customStep-1):]))
+            tempN = list(map(add, cell.N[-(customStep-1):], tempN[-(customStep-1):]))
+
+        tempIt += 1
+    
+    app.combinedCells.S.extend(tempS)
+    app.combinedCells.E.extend(tempE)
+    app.combinedCells.I.extend(tempI)
+    app.combinedCells.R.extend(tempR)
+    app.combinedCells.D.extend(tempD)
+    app.combinedCells.N.extend(tempN)
+    app.combinedCells.print()
 
     return response
 
@@ -352,7 +418,23 @@ def getAllCells(data):
 
         response['cells'].append(cellData)
 
-    if (len(response['cells']) == len(app.cells)):   
+    # Append the combined cell
+    countWithCombined = 0
+    if type(app.combinedCells) != type(None):
+        cellData = {}
+        cellData['name'] = app.combinedCells.name
+        cellData['population'] = app.combinedCells.getPopulation()
+        # list in format SEIRD
+        epiOutputs = app.combinedCells.getOutputs()
+        cellData['susceptibles'] = epiOutputs[0]
+        cellData['exposed'] = epiOutputs[1]
+        cellData['infected'] = epiOutputs[2]
+        cellData['recovered'] = epiOutputs[3]
+        cellData['deaths'] = epiOutputs[4]
+        response['cells'].insert(0, cellData)
+        countWithCombined += 1
+
+    if (len(response['cells']) == (len(app.cells) + countWithCombined)):   
         response['status'] = "Successfully returned all cells"
 
     else:
