@@ -44,18 +44,18 @@ function removeStudent(id){
 
 // Display Policies
 function displayPolicies(){
-    if(lastMain == 0){
-        $("#policy-controls").html("<h5 class='ml-4'>All (Combined Cells)</h5>");
-    } else {    
-        $.get("/accessCodes.json", function(access){
-            var urlCode = $(location).attr('href').substr(-4);
-            var controlCell = -1;
-            $.each(access, function(j, val){
-                if(urlCode == val.accessCode){ controlCell = j + 1; }
-            });
-            
-            var output = "";
-            $.get("/policies.json", function(data){
+    $.get("/accessCodes.json", function(access){
+        var urlCode = $(location).attr('href').substr(-4);
+        var controlCell = -1;
+        $.each(access, function(j, val){
+            if(urlCode == val.accessCode){ controlCell = j + 1; }
+        });
+        
+        var output = "";
+        $.get("/policies.json", function(data){
+            if(lastMain == data.length) { 
+                output = ("<h5 class='ml-4'>All (Combined Cells)</h5>"); 
+            } else {
                 $.each(data[lastMain].policies, function(i, key){
                     output += '<div class="form-group form-inline col-sm-6 ml-3 p-0">';
                     output += '<label for="policy-'+ i +'">' + key.policyName + ': </label>'
@@ -72,12 +72,12 @@ function displayPolicies(){
                 });
                 output += '<div class="w-100"></div>';
                 output += '<div><button class="m-3 btn btn-primary" id="policy-update-btn" disabled="disabled" onclick="postPolicyChanges()">Update</button></div>';
-            }).done(function(){
-                $("#policy-controls").html(output);
-                policyChanges();
-            });
+            }
+        }).done(function(){
+            $("#policy-controls").html(output);
+            policyChanges();
         });
-    }
+    });
 }
     
 
@@ -141,7 +141,7 @@ function postPolicyChanges(){
                 obj.conform = $("#policy-" + i + "-conform").val();
                 out.push(obj);
         });
-        out = { cell: lastMain, policies: out}
+        out = { cell: (lastMain), policies: out}
         $.post("/policyChanges", out ).done(function(){
             displayPolicies()
         });
