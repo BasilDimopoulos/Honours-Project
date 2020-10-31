@@ -431,7 +431,7 @@ def getAllCells(data):
         cellData['infected'] = epiOutputs[2]
         cellData['recovered'] = epiOutputs[3]
         cellData['deaths'] = epiOutputs[4]
-        response['cells'].append(cellData)
+        response['cells'].insert(0, cellData)
         countWithCombined += 1
 
     if (len(response['cells']) == (len(app.cells) + countWithCombined)):   
