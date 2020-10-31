@@ -48,7 +48,7 @@ function displayPolicies(){
         var urlCode = $(location).attr('href').substr(-4);
         var controlCell = -1;
         $.each(access, function(j, val){
-            if(urlCode == val.accessCode){ controlCell = j + 1; }
+            if(urlCode == val.accessCode){ controlCell = j; }
         });
         
         var output = "";
@@ -64,7 +64,7 @@ function displayPolicies(){
                     if(key.policyEnabled) output += ' checked="true"';        
                     output += '>'
                     output += '</div><div class="mt-2 col-sm-4">'
-                    output += '<input style="margin-top: .5vh; text-align: right;" type="number" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
+                    output += '<input style="margin-top: .5vh; text-align: right;" type="number" max="1" min="0" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
                     if(!key.policyAvailable || controlCell != lastMain) output += ' disabled="disabled"';        
                     output += '>'
                     output += '</div>'

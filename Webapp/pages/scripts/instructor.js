@@ -58,7 +58,7 @@ function displayPolicies(){
                 if(key.policyEnabled) output += ' checked="true"';        
                 output += '>'
                 output += '</div><div class="mt-2 col-sm-4">'
-                output += '<input style="margin-top: .5vh; text-align: right;" type="number" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
+                output += '<input style="margin-top: .5vh; text-align: right;" type="number" max="1" min="0" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
                 if(!key.policyAvailable) output += ' disabled="disabled"';        
                 output += '>'
                 output += '</div>'
