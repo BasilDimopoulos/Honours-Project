@@ -56,20 +56,22 @@ function displayPolicies(){
             if(lastMain == data.length) { 
                 output = ("<h5 class='ml-4'>All (Combined Cells)</h5>"); 
             } else {
-                output += '<div class="form-group form-inline col-sm-6 ml-3 p-0"><h5>' + cellcont[lastMain]["name"] + "</h5></div>";
+                output += '<div class="m-0 ml-3 mb-n6" style="height: 15px"><h5>' + cellcont[lastMain]["name"] + "</h5></div>";
+                output += '<div class="row w-100 m-0 mb-n3 mt-n6" p-0><div class="col-sm-6 float-right"><strong>Policy:</strong></div><div class="col-sm-5 float-right" style="text-align: center;"><strong>Adherence:</strong></div></div>';
                 $.each(data[lastMain].policies, function(i, key){
+                    output += '<div class="row w-100 my-n3 py-0 ml-1" style="height: 10px;">';
                     output += '<div class="form-group form-inline col-sm-6 ml-3 p-0">';
                     output += '<label for="policy-'+ i +'">' + key.policyName + ': </label>'
                     output += '<input type="checkbox" class="pol-cont form-control ml-2" id="policy-'+ i +'" name="policy-'+ i +'"';
                     if(!key.policyAvailable || controlCell != lastMain) output += ' disabled="disabled"';
                     if(key.policyEnabled) output += ' checked="true"';        
                     output += '>'
-                    output += '</div><div class="mt-2 col-sm-4">'
-                    output += '<input style="margin-top: .5vh; text-align: right;" type="number" max="1" min="0" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
+                    output += '</div><div class="col-sm-4 ml-n1 m-0">'
+                    output += '<input style="margin-top: 0px; text-align: right;" type="number" max="1" min="0" step="0.01" class="pol-cont form-control float-right" id="policy-'+ i  +'-conform" name="policy-'+ i +'-conform" value='+ key.policyConform.toFixed(2);
                     if(!key.policyAvailable || controlCell != lastMain) output += ' disabled="disabled"';        
-                    output += '>'
-                    output += '</div>'
-                    output += '<div class="w-100"><hr /></div>';
+                    output += '>';
+                    output += '</div>';
+                   output += '</div>'; 
                 });
                 output += '<div class="w-100"></div>';
                 output += '<div><button class="m-3 btn btn-primary" id="policy-update-btn" disabled="disabled" onclick="postPolicyChanges()">Update</button></div>';
