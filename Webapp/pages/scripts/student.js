@@ -141,7 +141,7 @@ function postPolicyChanges(){
                 obj.conform = $("#policy-" + i + "-conform").val();
                 out.push(obj);
         });
-        out = { cell: lastMain, policies: out}
+        out = { cell: (lastMain), policies: out}
         $.post("/policyChanges", out ).done(function(){
             displayPolicies()
         });
