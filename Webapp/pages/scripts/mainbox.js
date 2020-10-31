@@ -183,13 +183,23 @@ $( window ).resize(function(){
 });
 
 function updateDisplayValues(cell){
+    var pop = cellcont[cell]["population"];
+    var sper = ((cellcont[cell]["susceptibles"].slice(-1)[0]/pop)*100);
+    var eper = ((cellcont[cell]["exposed"].slice(-1)[0]/pop)*100);
+    var iper = ((cellcont[cell]["infected"].slice(-1)[0]/pop)*100);
+    var rper = ((cellcont[cell]["recovered"].slice(-1)[0]/pop)*100);
+    var dper = ((cellcont[cell]["deaths"].slice(-1)[0]/pop)*100);
+
+    sper -= sper%.01; eper -= eper%.01; iper -= iper%.01; rper -= rper%.01; dper -= dper%.01;
+
+
     $("#display_time").text(cellcont[0]["susceptibles"].length - 1);
     $("#display_P").text(cellcont[cell]["population"]);
-    $("#display_S").text(cellcont[cell]["susceptibles"].slice(-1)[0].toFixed(0));
-    $("#display_E").text(cellcont[cell]["exposed"].slice(-1)[0].toFixed(0));
-    $("#display_I").text(cellcont[cell]["infected"].slice(-1)[0].toFixed(0));
-    $("#display_R").text(cellcont[cell]["recovered"].slice(-1)[0].toFixed(0));
-    $("#display_D").text(cellcont[cell]["deaths"].slice(-1)[0].toFixed(0));
+    $("#display_S").text(cellcont[cell]["susceptibles"].slice(-1)[0].toFixed(0) + " (" + sper.toFixed(2) + "%)");
+    $("#display_E").text(cellcont[cell]["exposed"].slice(-1)[0].toFixed(0) + " (" + eper.toFixed(2) + "%)");
+    $("#display_I").text(cellcont[cell]["infected"].slice(-1)[0].toFixed(0) + " (" + iper.toFixed(2) + "%)");
+    $("#display_R").text(cellcont[cell]["recovered"].slice(-1)[0].toFixed(0) + " (" + rper.toFixed(2) + "%)");
+    $("#display_D").text(cellcont[cell]["deaths"].slice(-1)[0].toFixed(0) + " (" + dper.toFixed(2) + "%)");
 }
 
 function updateHidden(){
