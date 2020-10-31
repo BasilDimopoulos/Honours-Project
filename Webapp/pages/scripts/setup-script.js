@@ -85,6 +85,7 @@ window.onclick = function(event) {
 //
 
 nextBtnFirst.addEventListener("click", function(event){
+  if(checkPageOne() == true){
   getPageOneData();
   if(simulation.numberOfCells > 0){
   event.preventDefault();
@@ -112,22 +113,27 @@ nextBtnFirst.addEventListener("click", function(event){
 }else{
   alert("Please enter valid input");
 }
+}
 });
 nextBtnSec.addEventListener("click", function(event){
+  if(checkPageTwo() == true){
   event.preventDefault();
   slidePage.style.marginLeft = "-50%";
   bullet[current - 1].classList.add("active");
   progressCheck[current - 1].classList.add("active");
   progressText[current - 1].classList.add("active");
   current += 1;
+  }
 });
 nextBtnThird.addEventListener("click", function(event){
+  if(checkPageThree()== true){
   event.preventDefault();
   slidePage.style.marginLeft = "-75%";
   bullet[current - 1].classList.add("active");
   progressCheck[current - 1].classList.add("active");
   progressText[current - 1].classList.add("active");
   current += 1;
+}
 
   // var confirmation = prepareData();
   // console.log(confirmation);
@@ -203,6 +209,7 @@ function newCell(number){
    for(var i = 0; i < titles.length; i ++){
      titles[i].innerHTML = "Cell " + (i+1).toString();
    }
+     replacingPlaceholders();
 }
 
 function removeCells(num){
@@ -239,6 +246,7 @@ function getPageOneData(){
   simulation.simulationDays = $(".simulationDays").val();
   simulation.timeStep = $(".timeStep").val();
   simulation.numberOfCells = $(".CellNumber").val();
+
 }
 
 function getPageTwoData(){
@@ -401,4 +409,47 @@ function policyPreset(pol){
     $(".susceptibility-multiplier")[positions].value = pol.susceptibilityMultiplier;
     $(".compliance-multiplier")[positions].value = pol.complianceMultiplier;
     $(".death-multiplier")[positions].value = pol.deathMultiplier;
+}
+
+function replacingPlaceholders(){
+  var holder = $(".cellName");
+  for(var i = 0; i < holder.length; i++){
+    holder[i].placeholder = "Cell " + (i+1);
+  }
+}
+
+function checkPageOne(){
+  var inputs = $(".pageOne");
+
+  for(var i = 0; i < inputs.length; i++){
+  if (!inputs[i].value) {
+    alert("Please fill out all fields");
+    return false;
+    }
+  }
+  return true;
+}
+
+function checkPageTwo(){
+  var inputs = $(".pageTwo");
+
+  for(var i = 0; i < inputs.length; i++){
+  if (!inputs[i].value) {
+    alert("Please fill out all fields");
+    return false;
+    }
+  }
+  return true;
+}
+
+function checkPageThree(){
+  var inputs = $(".pageThree");
+
+  for(var i = 0; i < inputs.length; i++){
+  if (!inputs[i].value) {
+    alert("Please fill out all fields");
+    return false;
+    }
+  }
+  return true;
 }

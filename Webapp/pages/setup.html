@@ -101,22 +101,22 @@
           <div class="title">Cell and Time Settings</div>
           <div class="field">
             <div class="label">Exercise Name</div>
-            <input class = "excersise-name" placeholder="My New Simulation" type="text">
+            <input class = "excersise-name pageOne" placeholder="My New Simulation" type="text">
           </div>
           <div class="field tooltip">
             <span class="tooltiptext">The number of locations in your simulation</span>
             <div class="label">Number of Cells</div>
-            <input type="number" placeholder="3" class="CellNumber">
+            <input type="number" placeholder="3" class="CellNumber pageOne">
           </div>
           <div class="field tooltip">
             <span class="tooltiptext">How long to run the simulation</span>
             <div class="label">Simulation Days</div>
-            <input type="number" placeholder="120" class="simulationDays">
+            <input type="number" placeholder="120" class="simulationDays pageOne">
           </div>
           <div class="field tooltip">
             <span class="tooltiptext">How far in time to skip each iteration</span>
             <div class="label">Time Step</div>
-            <input type="number" placeholder="5" class="timeStep">
+            <input type="number" placeholder="5" class="timeStep pageOne">
           </div>
           <div class="field">
             <button class="firstNext next">Next</button>
@@ -131,67 +131,67 @@
               <div class="seirdTitle">Cell </div>
               <div class="field" style = "width:100px;">
                 <div class="label">Cell Name</div>
-                <input class="cellName" placeholder="SA" type="text">
+                <input class="cellName pageTwo" placeholder="SA" type="text">
               </div>
 
               <div class="field inital-input">
                 <div class="label">Population</div>
-                <input class="populations" placeholder="118420" type="number">
+                <input class="populations pageTwo" placeholder="118420" type="number">
               </div>
 
 
               <div class="field inital-input tooltip">
                 <span class="tooltiptext">Inital number of exposed</span>
                 <div class="label">Initial E</div>
-                <input type="number" placeholder="10" class="iE">
+                <input type="number" placeholder="10" class="iE pageTwo">
               </div>
 
               <div class="field inital-input tooltip">
                 <span class="tooltiptext">Inital number of infected</span>
                 <div class="label">Initial I</div>
-                <input type="number" placeholder="10" class="iI">
+                <input type="number" placeholder="10" class="iI pageTwo">
               </div>
 
               <div class="field inital-input tooltip">
                 <span class="tooltiptext">Inital number of recovered</span>
                 <div class="label">Initial R</div>
-                <input type="number" placeholder="10" class="iR">
+                <input type="number" placeholder="10" class="iR pageTwo">
               </div>
 
               <div class="field inital-input tooltip">
                 <span class="tooltiptext">Inital number of deceased</span>
                 <div class="label">Initial D</div>
-                <input type="number" placeholder="10" class="iD">
+                <input type="number" placeholder="10" class="iD pageTwo">
               </div>
 
               <div class="field equationParameters tooltip">
                 <span class="tooltiptext">The probability of 1 person infecting another - Between 0 - 1.0</span>
                 <div class="label">Infection Rate</div>
-                <input type="number" placeholder="0.20" class="infection-rate">
+                <input step="0.01" type="number" placeholder="0.20" class="infection-rate pageTwo">
               </div>
 
               <div class="field equationParameters tooltip">
-                <span class="tooltiptext">The time it takes for an infected person to show symptoms - Between 0 - 1.0</span>
+                <span class="tooltiptext">The rate at which an infected person will show symptoms - Between 0 - 1.0</span>
                 <div class="label">Incubation Rate</div>
-                <input type="number" placeholder="0.20" class="incubation-rate">
+                <input step="0.01" type="number" placeholder="0.20" class="incubation-rate pageTwo">
               </div>
 
               <div class="field equationParameters tooltip">
-                <span class="tooltiptext">The time it takes to recover - Between 0 - 1.0</span>
+                <span class="tooltiptext">The rate at which a person will recover - Between 0 - 1.0</span>
                 <div class="label">Recovery Rate</div>
-                <input type="number" placeholder="0.20" class="recovery-rate">
+                <input step="0.01" type="number" placeholder="0.20" class="recovery-rate pageTwo">
               </div>
 
               <div class="field equationParameters tooltip">
                 <span class="tooltiptext">The probability of death - Between 0 - 1.0</span>
                 <div class="label">Death Rate</div>
-                <input type="number" placeholder="0.20" class="death-rate">
+                <input step="0.01" type="number" placeholder="0.20" class="death-rate pageTwo">
               </div>
 
               <div class="field returnToSusceptibilityDiv tooltip" style="width:195px;">
-                <span class="tooltiptext">The time it takes for a recovered person to become susceptible to the virus again - Between 0 - 1.0</span>
+                <span class="tooltiptext">The rate at which a recovered person takes to become susceptible to the virus again - Between 0 - 1.0</span>
                 <div class="label">Return to Susceptibility</div>
-                <input type="number" placeholder="0.20" class="rTS">
+                <input step="0.01" type="number" placeholder="0.20" class="rTS pageTwo">
               </div>
 
               <div class="field returnToSusceptibilityDiv" style="padding-top: 0px;  width:220px;"></div>
@@ -216,37 +216,37 @@
               </div>
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Policy Name</div>
-                <input type="text" placeholder="Face Masks" class = "policy-name">
+                <input type="text" placeholder="Face Masks" class = "policy-name pageThree">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Infection Multiplier</div>
-                <input type="number" placeholder="0.5" class = "infection-multiplier">
+                <input step="0.01" type="number" placeholder="0.5" class = "infection-multiplier pageThree">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Incubation Multiplier</div>
-                <input type="number" placeholder="2.0" class = "incubation-multiplier">
+                <input step="0.01" type="number" placeholder="2.0" class = "incubation-multiplier pageThree">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Recovery Multiplier</div>
-                <input type="number" placeholder="0.5" class = "recovery-multiplier">
+                <input step="0.01" type="number" placeholder="0.5" class = "recovery-multiplier pageThree">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Death Multiplier</div>
-                <input type="number" placeholder="0.5" class = "death-multiplier">
+                <input step="0.01" type="number" placeholder="0.5" class = "death-multiplier pageThree">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-bottom:0px;!important">
                 <div class="label">Susceptibility Multiplier</div>
-                <input type="number" placeholder="0.5" class = "susceptibility-multiplier">
+                <input step="0.01" type="number" placeholder="0.5" class = "susceptibility-multiplier pageThree">
               </div>
 
               <div class="field equationParametersMultiplier" style="margin-top:25px;!important">
-                <div class="label">Compliance Percentage</div>
-                <input type="number" placeholder="1.0" class = "compliance-multiplier">
+                <div class="label">Adherence Proportion</div>
+                <input step="0.01" type="number" placeholder="1.0" class = "compliance-multiplier pageThree">
               </div>
               <div class="field equationParametersMultiplier" style="margin-top:25px;!important">
               </div>
