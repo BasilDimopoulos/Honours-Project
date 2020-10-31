@@ -209,6 +209,7 @@ function newCell(number){
    for(var i = 0; i < titles.length; i ++){
      titles[i].innerHTML = "Cell " + (i+1).toString();
    }
+     replacingPlaceholders();
 }
 
 function removeCells(num){
