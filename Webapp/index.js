@@ -154,7 +154,7 @@ app.post("/init", function(req, res){
             policy.policyName = req.body.policies[j].policyName;
             policy.policyAvailable = false;
             policy.policyEnabled = false;
-            policy.policyConform = parseFloat(req.body.policies[j].complianceMultiplier)  + Math.random();
+            policy.policyConform = parseFloat(req.body.policies[j].complianceMultiplier);
             cell.policies.push(policy);
         }
         listPolicies.push(cell);
